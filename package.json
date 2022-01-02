@@ -1,0 +1,24 @@
+{
+  "name": "@kettek/rife",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "packages/browser"
+  ],
+  "scripts": {
+    "start": "npm run start --workspace=packages/browser",
+    "build": "npm run build --workspaces"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kettek/rife.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/kettek/rife/issues"
+  },
+  "homepage": "https://github.com/kettek/rife#readme"
+}
