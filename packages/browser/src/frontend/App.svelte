@@ -1,12 +1,13 @@
 <script lang='ts'>
   import Browser from "./Browser.svelte"
   import Menu from "./Menu.svelte"
+  import { tabsStore } from "./stores/tabs"
 
 </script>
 
 <main>
   <Menu></Menu>
-  <Browser></Browser>
+  <Browser tabs={$tabsStore}></Browser>
 </main>
 
 <style>

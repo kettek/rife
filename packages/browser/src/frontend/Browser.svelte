@@ -1,8 +1,9 @@
 <script lang='ts'>
   import BrowserView from "./BrowserView.svelte"
-import SplitView from "./SplitView.svelte"
+  import type { Tab } from "./interfaces/Tab"
+  import SplitView from "./SplitView.svelte"
 
-  export let tabs: any[] = [{}, {}]
+  export let tabs: Tab[] = [{}, {}]
   export let title: string = ''
 
   let focusedTabId: string = ''
@@ -18,7 +19,7 @@ import SplitView from "./SplitView.svelte"
       <nav slot='a'>
         {#each tabs as tab}
           <button>
-            {tab}
+            {tab.title}
           </button>
         {/each}
       </nav>
