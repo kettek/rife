@@ -29,7 +29,7 @@
       console.log('hide', lastActiveNavigatorUUID)
       ;(globalThis as any).navigation.hide(lastActiveNavigatorUUID)
 
-      ;(globalThis as any).navigation.position(stack.activeNavigatorUUID, {x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height-18})
+      ;(globalThis as any).navigation.position(stack.activeNavigatorUUID, {x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height-24})
 
       ;(globalThis as any).navigation.show(stack.activeNavigatorUUID)
 
@@ -65,7 +65,7 @@
       // TODO: Send IPC for resize for active navigator
       bounds = el.getBoundingClientRect()
       if (activeNavigator) {
-        ;(globalThis as any).navigation.position(activeNavigator.uuid, {x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height-18})
+        ;(globalThis as any).navigation.position(activeNavigator.uuid, {x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height-24})
       }
     })
     return () => {
