@@ -7,6 +7,8 @@ import { join } from 'path'
 import logger from './utils/logger'
 import settings from './utils/settings'
 
+import './views'
+
 const isProd = process.env.NODE_ENV === 'production' || !/[\\/]electron/.exec(process.execPath) // !process.execPath.match(/[\\/]electron/)
 
 logger.info('App starting...')
@@ -14,17 +16,19 @@ settings.set('check', true)
 logger.info('Checking if settings store works correctly.')
 logger.info(settings.get('check') ? 'Settings store works correctly.' : 'Settings store has a problem.')
 
-let mainWindow: BrowserWindow | null
+import { mainWindow, setMainWindow } from './window'
 
 const createWindow = () => {
-  mainWindow = new BrowserWindow({
+  setMainWindow(new BrowserWindow({
     width: 900,
     height: 680,
     webPreferences: {
       devTools: isProd ? false : true,
       contextIsolation: true,
+      preload: join(__dirname, 'preload.js'),
     },
-  })
+  }))
+  if (!mainWindow) return
 
   const url =
     isProd
@@ -41,7 +45,7 @@ const createWindow = () => {
   if (!isProd) mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', () => {
-    mainWindow = null
+    setMainWindow(null)
   })
 }
 

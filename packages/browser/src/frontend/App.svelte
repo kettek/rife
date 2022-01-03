@@ -6,16 +6,23 @@
   import { mkNavigator } from './interfaces/Navigator'
   import { mkNavigatorStack } from './interfaces/Stack'
   import StackContainerView from './StackContainerView.svelte'
-import SplitView from './SplitView.svelte'
+  import SplitView from './SplitView.svelte'
 
-  navigatorStore.set([
+  navigatorStore.set([])
+
+  let ns = [
     mkNavigator(),
     mkNavigator(),
     mkNavigator(),
     mkNavigator(),
     mkNavigator(),
     mkNavigator(),
-  ])
+  ]
+
+  for (let n of ns) {
+    navigatorStore.add(n)
+  }
+
   $navigatorStore[0].history.push({
     location: 'https://kettek.net',
     title: 'kettek',
@@ -51,5 +58,6 @@ import SplitView from './SplitView.svelte'
     height: 100%;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
   }
 </style>
