@@ -1,7 +1,3 @@
-<script lang='ts'>
-  export let uuid: string = ''
-</script>
-
 <main>
   <nav>
     <button>left</button>

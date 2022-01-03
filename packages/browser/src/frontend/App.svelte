@@ -1,13 +1,34 @@
 <script lang='ts'>
-  import Browser from "./Browser.svelte"
-  import Menu from "./Menu.svelte"
-  import { tabsStore } from "./stores/tabs"
+  import Menu from './Menu.svelte'
+  import { stackStore } from './stores/stacks'
+  import { navigatorStore } from './stores/navigators'
+  import { mkNavigator } from './interfaces/Navigator'
+  import { mkNavigatorStack } from './interfaces/Stack'
+  import StackContainerView from './StackContainerView.svelte'
+
+  navigatorStore.set([
+    mkNavigator(),
+    mkNavigator(),
+    mkNavigator(),
+    mkNavigator(),
+    mkNavigator(),
+    mkNavigator(),
+  ])
+
+  let stack = mkNavigatorStack($navigatorStore.filter((_,index)=>index<3).map(v=>v.uuid))
+  let substack = mkNavigatorStack([])
+  let substack2 = mkNavigatorStack($navigatorStore.filter((_,index)=>index>=3).map(v=>v.uuid))
+  stack.stack = substack
+  substack.stackDir = 'horizontal'
+  substack.stack = substack2
+
+  stackStore.set(stack)
 
 </script>
 
 <main>
   <Menu></Menu>
-  <Browser tabs={$tabsStore}></Browser>
+  <StackContainerView stack={$stackStore}></StackContainerView>
 </main>
 
 <style>
