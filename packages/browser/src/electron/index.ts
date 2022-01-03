@@ -31,6 +31,25 @@ const createWindow = () => {
   }))
   if (!mainWindow) return
 
+
+  mainWindow.webContents.on('will-navigate', (event, navigationUrl) => {
+    // Reset navigators on navigation.
+    for (let n of navigators) {
+      mainWindow?.removeBrowserView(n.view)
+    }
+    clearNavigators()
+
+    const parsedURL = new URL(navigationUrl)
+    // In dev mode allow Hot Module Replacement
+    if (parsedURL.host !== 'localhost:5000' && !isProd) {
+      logger.warn('Stopped attempt to open: ' + navigationUrl)
+      event.preventDefault()
+    } else if (isProd) {
+      logger.warn('Stopped attempt to open: ' + navigationUrl)
+      event.preventDefault()
+    }
+  })
+
   const url =
     isProd
       ? // in production, use the statically build version of our application
@@ -78,24 +97,6 @@ app.on('web-contents-created', (e, contents) => {
     // if (!params.src.startsWith(`file://${join(__dirname)}`)) {
     //   event.preventDefault() // We do not open anything now
     // }
-  })
-
-  contents.on('will-navigate', (event, navigationUrl) => {
-    // Reset navigators on navigation.
-    for (let n of navigators) {
-      mainWindow?.removeBrowserView(n.view)
-    }
-    clearNavigators()
-
-    const parsedURL = new URL(navigationUrl)
-    // In dev mode allow Hot Module Replacement
-    if (parsedURL.host !== 'localhost:5000' && !isProd) {
-      logger.warn('Stopped attempt to open: ' + navigationUrl)
-      event.preventDefault()
-    } else if (isProd) {
-      logger.warn('Stopped attempt to open: ' + navigationUrl)
-      event.preventDefault()
-    }
   })
 })
 
