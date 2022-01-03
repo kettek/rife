@@ -3,36 +3,40 @@
   import { dragCount } from './stores/tabs'
 
   let pendingDragCount = 0
+  let pendingDragUUID: string = ''
   function handleDragStart(e: DragEvent) {
     if (!e.dataTransfer || !e.target) return
     e.dataTransfer.dropEffect = 'move'
     e.dataTransfer.setData('text', e.target.dataset.tabuuid)
+    pendingDragUUID = e.target.dataset.tabuuid
     pendingDragCount = $dragCount+1
   }
   function handleDragEnd(e: DragEvent) {
     if (!e.dataTransfer || !e.target) return
     console.log('drag end')
     if (pendingDragCount === $dragCount) {
+      uuids = uuids.filter(v=>v!==pendingDragUUID)
       console.log('successful drop! remove from ourself?')
     }
   }
   //
   function handleDragEnter(e: DragEvent) {
-    console.log('drag enter')
   }
   function handleDragLeave(e: DragEvent) {
-    console.log('drag leave')
   }
   function handleDrop(e: DragEvent) {
     let uuid = e.dataTransfer?.getData('text')
     if (!uuid) return
     e.preventDefault()
+    e.stopPropagation()
     console.log('drop', uuid, 'at somewhere in list')
 
     if (uuids.includes(uuid)) {
       console.log('is from ourself')
     } else {
-      console.log('is to external')
+      console.log('is from external')
+      uuids.push(uuid)
+      uuids = uuids
       $dragCount++
     }
   }
@@ -46,7 +50,9 @@
     if (uuids.includes(uuid)) {
       console.log('is from ourself')
     } else {
-      console.log('is to external')
+      console.log('is from external')
+      uuids.push(uuid)
+      uuids = uuids
       $dragCount++
     }
   }
