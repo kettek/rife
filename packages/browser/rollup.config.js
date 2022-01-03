@@ -15,7 +15,7 @@ export default {
   output: {
     sourcemap: !production,
     format: "iife",
-    name: "fluide",
+    name: "rife",
     file: "public/build/bundle.js",
   },
   plugins: [
