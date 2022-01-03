@@ -51,3 +51,22 @@ export interface NavigationDeleteMessage {
 export function isNavigationDeleteMessage(o: any): o is NavigationDeleteMessage {
   return o.type === 'delete'
 }
+
+export interface NavigationNavigateMessage {
+  type: 'navigate'
+  uuid: string
+  url: string
+}
+export function isNavigationNavigateMessage(o: any): o is NavigationNavigateMessage {
+  return o.type === 'navigate'
+}
+
+export interface NavigationNavigateResult {
+  type: 'navigate-result'
+  uuid: string
+  title: string
+  favicon: string
+}
+export function isNavigationNavigateResult(o: any): o is NavigationNavigateResult {
+  return o.type === 'navigate-result'
+}

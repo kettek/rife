@@ -20,6 +20,9 @@
   let bounds = new DOMRect(0,0,0,0)
   $: activeNavigator = $navigatorStore.find(v=>v.uuid===stack.activeNavigatorUUID)
 
+  $: currentHistory = activeNavigator?.history
+  $: currentHistoryEntry = (currentHistory && activeNavigator) ? currentHistory[activeNavigator.activeHistoryPosition] : { location: '', title: '', favicon: '' }
+
   let lastActiveNavigatorUUID: string = ''
   $: {
     if (stack.activeNavigatorUUID !== lastActiveNavigatorUUID) {
@@ -81,7 +84,11 @@
     <button>left</button>
     <button>right</button>
     <button>reload</button>
-    <input type='search' placeholder='https://...'/>
+    {#if currentHistory}
+      <input type='search' placeholder='https://...' />
+    {:else}
+      <input type='search' placeholder='https://...' bind:value={currentHistoryEntry.location} />
+    {/if}
   </nav>
   <article bind:this={navElement}>
   </article>

@@ -1,9 +1,9 @@
 import { ipcMain } from 'electron'
-import { isNavigationShowMessage, isNavigationHideMessage, isNavigationPositionMessage, isNavigationCreateMessage, isNavigationDeleteMessage } from '../api/navigation'
+import { isNavigationShowMessage, isNavigationHideMessage, isNavigationPositionMessage, isNavigationCreateMessage, isNavigationDeleteMessage, isNavigationNavigateMessage } from '../api/navigation'
 import { createNavigator, deleteNavigator, getNavigator } from './navigators'
 import { mainWindow } from './window'
 
-ipcMain.handle('navigation', (_: Electron.IpcMainInvokeEvent, o: any) => {
+ipcMain.handle('navigation', async (_: Electron.IpcMainInvokeEvent, o: any): Promise<any> => {
   if (isNavigationShowMessage(o)) {
     let n = getNavigator(o.uuid)
     if (!n) return
@@ -25,5 +25,9 @@ ipcMain.handle('navigation', (_: Electron.IpcMainInvokeEvent, o: any) => {
     if (!n) return
     mainWindow?.removeBrowserView(n.view)
     deleteNavigator(o.uuid)
+  } else if (isNavigationNavigateMessage(o)) {
+    let n = getNavigator(o.uuid)
+    if (!n) return
+    n.view.webContents.loadURL(o.url)
   }
 })
