@@ -1,9 +1,11 @@
 <script lang='ts'>
 import type { NavigatorStack } from './interfaces/Stack';
+import { navigatorStore } from './stores/navigators';
 
   import { dragCount } from './stores/tabs'
 
   export let stack: NavigatorStack
+  $: activeNavigator = $navigatorStore.find(v=>v.uuid===stack.activeNavigatorUUID)
 
   function handleDragEnter(e: DragEvent) {
   }
@@ -39,7 +41,11 @@ import type { NavigatorStack } from './interfaces/Stack';
     <input type='search' placeholder='https://...'/>
   </nav>
   <article>
-    Current View Here
+    {#if activeNavigator}
+      {activeNavigator.uuid}
+    {:else}
+      no active navigator
+    {/if}
   </article>
 </main>
 

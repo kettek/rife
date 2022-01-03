@@ -22,7 +22,7 @@ import SplitView from './SplitView.svelte'
     favicon: '',
   })
 
-  $navigatorStore[3].history.push({
+  $navigatorStore[4].history.push({
     location: 'https://kettek.net',
     title: 'kettek',
     favicon: '',
@@ -30,11 +30,8 @@ import SplitView from './SplitView.svelte'
 
 
   let stack = mkNavigatorStack($navigatorStore.filter((_,index)=>index<3).map(v=>v.uuid))
-  let substack = mkNavigatorStack([])
-  let substack2 = mkNavigatorStack($navigatorStore.filter((_,index)=>index>=3).map(v=>v.uuid))
+  let substack = mkNavigatorStack($navigatorStore.filter((_,index)=>index>=3).map(v=>v.uuid))
   stack.stack = substack
-  substack.stackDir = 'horizontal'
-  substack.stack = substack2
 
   stackStore.set(stack)
 

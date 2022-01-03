@@ -2,6 +2,7 @@
   import { navigatorStore } from './stores/navigators'
 
   export let uuids: string[]
+  export let activeUUID: string
   export let horizontal: boolean = false
   import { dragCount } from './stores/tabs'
 
@@ -61,6 +62,9 @@
       $dragCount++
     }
   }
+  function handleTabClick(e: MouseEvent) {
+    activeUUID = e.target.dataset.tabuuid
+  }
 </script>
 
 <main
@@ -77,6 +81,8 @@
       on:dragstart={handleDragStart}
       on:dragend={handleDragEnd}
       on:drop={handleTabDrop}
+      on:click={handleTabClick}
+      class:active={activeUUID===navigator.uuid}
     >
       {navigator.history.length? navigator.history[navigator.activeHistoryPosition].title : 'Empty Tab'}
     </div>
@@ -95,5 +101,8 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+  div.active {
+    background: #666;
   }
 </style>

@@ -7,7 +7,7 @@
 </script>
 
 <section>
-  <TabsView horizontal slot='a' bind:uuids={stack.navigatorUUIDs}></TabsView>
+  <TabsView horizontal slot='a' bind:uuids={stack.navigatorUUIDs} bind:activeUUID={stack.activeNavigatorUUID}></TabsView>
   <NavigationView slot='b' bind:stack={stack}></NavigationView>
 </section>
 
