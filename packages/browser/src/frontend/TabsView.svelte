@@ -2,6 +2,7 @@
   import { navigatorStore } from './stores/navigators'
 
   export let uuids: string[]
+  export let horizontal: boolean = false
   import { dragCount } from './stores/tabs'
 
   $: navigators = $navigatorStore.filter(v=>uuids.includes(v.uuid))
@@ -67,6 +68,7 @@
   on:dragleave={handleDragLeave}
   on:drop={handleDrop}
   ondragover='return false'
+  class:horizontal
 >
   {#each navigators as navigator}
     <div
@@ -85,6 +87,9 @@
   main {
     display: flex;
     flex-direction: column;
+  }
+  main.horizontal {
+    flex-direction: row;
   }
   div {
     overflow: hidden;

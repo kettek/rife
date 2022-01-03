@@ -1,10 +1,12 @@
 <script lang='ts'>
   import Menu from './Menu.svelte'
+  import TabsView from './TabsView.svelte'
   import { stackStore } from './stores/stacks'
   import { navigatorStore } from './stores/navigators'
   import { mkNavigator } from './interfaces/Navigator'
   import { mkNavigatorStack } from './interfaces/Stack'
   import StackContainerView from './StackContainerView.svelte'
+import SplitView from './SplitView.svelte'
 
   navigatorStore.set([
     mkNavigator(),
@@ -40,7 +42,10 @@
 
 <main>
   <Menu></Menu>
-  <StackContainerView stack={$stackStore}></StackContainerView>
+  <SplitView type='horizontal' pos={25}>
+    <TabsView slot='a' uuids={$navigatorStore.map(v=>v.uuid)}></TabsView>
+    <StackContainerView slot='b' stack={$stackStore}></StackContainerView>
+  </SplitView>
 </main>
 
 <style>
