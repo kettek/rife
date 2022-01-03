@@ -30,3 +30,7 @@ export function deleteNavigator(uuid: string) {
 export function getNavigator(uuid: string): NavigatorContainer | undefined {
   return navigators.find(v=>v.navigator.uuid === uuid)
 }
+
+export function clearNavigators() {
+  navigators.splice(0, navigators.length)
+}

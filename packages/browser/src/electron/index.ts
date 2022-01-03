@@ -6,6 +6,7 @@ import { join } from 'path'
 
 import logger from './utils/logger'
 import settings from './utils/settings'
+import { clearNavigators, navigators } from './navigators'
 
 import './views'
 
@@ -80,6 +81,12 @@ app.on('web-contents-created', (e, contents) => {
   })
 
   contents.on('will-navigate', (event, navigationUrl) => {
+    // Reset navigators on navigation.
+    for (let n of navigators) {
+      mainWindow?.removeBrowserView(n.view)
+    }
+    clearNavigators()
+
     const parsedURL = new URL(navigationUrl)
     // In dev mode allow Hot Module Replacement
     if (parsedURL.host !== 'localhost:5000' && !isProd) {
@@ -93,3 +100,4 @@ app.on('web-contents-created', (e, contents) => {
 })
 
 import './update'
+
