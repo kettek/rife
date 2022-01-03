@@ -14,6 +14,18 @@
     mkNavigator(),
     mkNavigator(),
   ])
+  $navigatorStore[0].history.push({
+    location: 'https://kettek.net',
+    title: 'kettek',
+    favicon: '',
+  })
+
+  $navigatorStore[3].history.push({
+    location: 'https://kettek.net',
+    title: 'kettek',
+    favicon: '',
+  })
+
 
   let stack = mkNavigatorStack($navigatorStore.filter((_,index)=>index<3).map(v=>v.uuid))
   let substack = mkNavigatorStack([])

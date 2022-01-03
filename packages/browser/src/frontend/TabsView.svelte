@@ -1,6 +1,10 @@
 <script lang='ts'>
+  import { navigatorStore } from './stores/navigators'
+
   export let uuids: string[]
   import { dragCount } from './stores/tabs'
+
+  $: navigators = $navigatorStore.filter(v=>uuids.includes(v.uuid))
 
   let pendingDragCount = 0
   let pendingDragUUID: string = ''
@@ -64,15 +68,15 @@
   on:drop={handleDrop}
   ondragover='return false'
 >
-  {#each uuids as uuid}
+  {#each navigators as navigator}
     <div
-      data-tabUUID={uuid}
+      data-tabUUID={navigator.uuid}
       draggable=true
       on:dragstart={handleDragStart}
       on:dragend={handleDragEnd}
       on:drop={handleTabDrop}
     >
-      {uuid}
+      {navigator.history.length? navigator.history[navigator.activeHistoryPosition].title : 'Empty Tab'}
     </div>
   {/each}
 </main>
