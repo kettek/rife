@@ -17,6 +17,27 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
   }
   n.view.webContents.loadURL('https://kettek.net')
   n.view.setBounds(rect)
+
+  n.view.webContents.on('did-navigate', (_: Electron.Event, url: string) => {
+    console.log(n.navigator.uuid, 'did-navigate', url)
+  })
+
+  n.view.webContents.on('did-navigate-in-page', (_: Electron.Event, url: string) => {
+    console.log(n.navigator.uuid, 'did-navigate-in-page', url)
+  })
+
+  n.view.webContents.on('render-process-gone', (_: Electron.Event, details: Electron.RenderProcessGoneDetails) => {
+    console.log(n.navigator.uuid, 'render-process-gone', details)
+  })
+
+  n.view.webContents.on('unresponsive', (_: Electron.Event) => {
+    console.log(n.navigator.uuid, 'unresponsive')
+  })
+
+  n.view.webContents.on('responsive', (_: Electron.Event) => {
+    console.log(n.navigator.uuid, 'responsive')
+  })
+
   navigators.push(n)
   return n
 }
