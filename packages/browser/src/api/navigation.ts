@@ -109,6 +109,7 @@ export interface NavigationNavigateEvent {
   type: 'navigate'
   uuid: string
   url: string
+  title: string
   inPage?: boolean
 }
 export function isNavigationNavigateEvent(o: any): o is NavigationNavigateEvent {
@@ -117,4 +118,14 @@ export function isNavigationNavigateEvent(o: any): o is NavigationNavigateEvent 
 
 export interface RegisterCallback {
   (o: NavigationEvent): void
+}
+
+export interface NavigationShowEvent {
+  type: 'show'
+  uuid: string
+  url: string
+  title: string
+}
+export function isNavigationShowEvent(o: any): o is NavigationShowEvent {
+  return o.type === 'show'
 }
