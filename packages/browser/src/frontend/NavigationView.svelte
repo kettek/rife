@@ -82,6 +82,13 @@
     }
   }
 
+  function handleSearchKeyup(e: KeyboardEvent) {
+    if (!activeNavigator) return
+    if (e.code === 'Enter') {
+      window.rife.navigate(activeNavigator.uuid, currentURL)
+    }
+  }
+
   async function goBack() {
     if (!activeNavigator) return
     window.rife.back(activeNavigator.uuid)
@@ -122,7 +129,7 @@
     <button disabled={!canGoBack} on:click={goBack}>left</button>
     <button disabled={!canGoForward} on:click={goForward}>right</button>
     <button on:click={goReload}>reload</button>
-    <input type='search' placeholder='https://...' bind:value={currentURL} />
+    <input type='search' placeholder='https://...' bind:value={currentURL} on:keyup={handleSearchKeyup}/>
   </nav>
   <article bind:this={navElement}>
   </article>

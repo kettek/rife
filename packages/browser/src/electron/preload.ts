@@ -35,6 +35,11 @@ contextBridge.exposeInMainWorld('rife', {
     uuid,
     query,
   }),
+  navigate: (uuid: string, url: string) => ipcRenderer.invoke('rife', {
+    type: 'navigate',
+    uuid,
+    url,
+  }),
   reload: (uuid: string) => ipcRenderer.invoke('rife', {
     type: 'reload',
     uuid,
