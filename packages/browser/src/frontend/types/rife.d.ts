@@ -12,6 +12,8 @@ export interface IRifeAPI {
   reload: (uuid: string) => Promise<void>,
   register: (uuid: string, callback: RegisterCallback) => Promise<any>,
   unregister: (uuid: string, callback: RegisterCallback) => Promise<any>,
+  registerToAll: (callback: RegisterCallback) => Promise<any>,
+  unregisterToAll: (callback: RegisterCallback) => Promise<any>,
 }
 
 declare global {

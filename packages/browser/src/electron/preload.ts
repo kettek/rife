@@ -62,11 +62,22 @@ contextBridge.exposeInMainWorld('rife', {
       delete registered[uuid]
     }
   },
+  registerToAll: (callback: RegisterCallback) => {
+    if (globalRegistered.find(v=>v===callback)) return
+    globalRegistered.push(callback)
+  },
+  unregisterToAll: (callback: RegisterCallback) => {
+    globalRegistered = globalRegistered.filter(v=>v!==callback)
+  },
 })
 
+let globalRegistered: RegisterCallback[] = []
 let registered: Record<string, RegisterCallback[]> = {}
 
 ipcRenderer.on('rife', (_: Electron.IpcRendererEvent, o: NavigationEvent) => {
+  for (let cb of globalRegistered) {
+    cb(o)
+  }
   if (!registered[o.uuid]) return
   for (let cb of registered[o.uuid]) {
     cb(o)
