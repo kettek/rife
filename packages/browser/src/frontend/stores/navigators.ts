@@ -53,6 +53,7 @@ window.rife.registerToAll((o: NavigationEvent) => {
     let ns = get(navigatorStore)
     let n = ns.find(v=>v.uuid === o.uuid)
     if (!n) return
-    console.log('set favicon to one of', o.favicons)
+    n.favicons = n.favicons
+    navigatorStore.set(ns)
   }
 })

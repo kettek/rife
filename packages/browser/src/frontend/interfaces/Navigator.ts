@@ -12,6 +12,7 @@ export interface Navigator {
   url: string
   history: History[]
   activeHistoryPosition: number
+  favicons: string[] // current list of favicons
 }
 export function mkNavigator(): Navigator {
   return {
@@ -20,5 +21,6 @@ export function mkNavigator(): Navigator {
     title: '',
     url: '',
     activeHistoryPosition: 0,
+    favicons: [],
   }
 }
