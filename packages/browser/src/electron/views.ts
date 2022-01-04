@@ -10,6 +10,14 @@ ipcMain.handle('rife', async (_: Electron.IpcMainInvokeEvent, o: any): Promise<a
     mainWindow?.addBrowserView(n.view)
     // BUG: We have to setBounds to our getBounds, otherwise the view will be white...
     n.view.setBounds(n.view.getBounds())
+
+    // TODO: Should we just return the url and title?
+    mainWindow?.webContents.send('rife', {
+      type: 'show',
+      uuid: n.navigator.uuid,
+      url: n.view.webContents.getURL(),
+      title: n.view.webContents.getTitle(),
+    })
   } else if (isNavigationHideMessage(o)) {
     let n = getNavigator(o.uuid)
     if (!n) return
