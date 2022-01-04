@@ -84,7 +84,7 @@
       on:click={handleTabClick}
       class:active={activeUUID===navigator.uuid}
     >
-      {navigator.history.length? navigator.history[navigator.activeHistoryPosition].title : 'Empty Tab'}
+      {navigator.title||'New Tab'}
     </div>
   {/each}
 </main>

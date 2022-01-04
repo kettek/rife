@@ -12,7 +12,7 @@
   import type { Navigator } from './interfaces/Navigator'
   import type { NavigatorStack } from './interfaces/Stack'
   import { navigatorStore } from './stores/navigators'
-  import type { NavigationEvent } from '../api/navigation'
+  import { isNavigationShowEvent, NavigationEvent } from '../api/navigation'
   import { isNavigationNavigateEvent } from '../api/navigation'
   import { dragCount } from './stores/tabs'
 
@@ -26,6 +26,7 @@
 
   let canGoBack: boolean = false
   let canGoForward: boolean = false
+  let currentTitle: string = ''
   let currentURL: string = ''
 
   let lastActiveNavigatorUUID: string = ''
@@ -54,11 +55,20 @@
     }
   }
   async function handleNavigation(o: NavigationEvent) {
-    if (!activeNavigator) return
+    let navigator = $navigatorStore.find(v=>v.uuid===o.uuid)
+    if (!navigator) return
     if (isNavigationNavigateEvent(o)) {
+      navigator.title = o.title
+      navigator.url = o.url
       currentURL = o.url
-      canGoBack = await window.rife.back(activeNavigator.uuid, true)
-      canGoForward = await window.rife.forward(activeNavigator.uuid, true)
+      currentTitle = o.title
+      canGoBack = await window.rife.back(navigator.uuid, true)
+      canGoForward = await window.rife.forward(navigator.uuid, true)
+    } else if (isNavigationShowEvent(o)) {
+      navigator.title = o.title
+      navigator.url = o.url
+      currentTitle = o.title
+      currentURL = o.url
     }
   }
 
