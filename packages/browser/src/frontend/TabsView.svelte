@@ -84,7 +84,10 @@
       on:click={handleTabClick}
       class:active={activeUUID===navigator.uuid}
     >
-      {navigator.title||'New Tab'}
+      <img alt={navigator.title} src={navigator.favicons[0]}/>
+      <span>
+        {navigator.title||'New Tab'}
+      </span>
     </div>
   {/each}
 </main>
@@ -98,11 +101,23 @@
     flex-direction: row;
   }
   div {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
   }
   div.active {
     background: #666;
+  }
+  img {
+    max-height: 16px;
+    max-width: 16px;
+    object-fit: contain;
+    pointer-events: none;
+  }
+  span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    pointer-events: none;
   }
 </style>
