@@ -70,3 +70,29 @@ export interface NavigationNavigateResult {
 export function isNavigationNavigateResult(o: any): o is NavigationNavigateResult {
   return o.type === 'navigate-result'
 }
+
+export interface NavigationBackMessage {
+  type: 'back'
+  uuid: string
+  query?: boolean
+}
+export function isNavigationBackMessage(o: any): o is NavigationBackMessage {
+  return o.type === 'back'
+}
+
+export interface NavigationForwardMessage {
+  type: 'forward'
+  uuid: string
+  query?: boolean
+}
+export function isNavigationForwardMessage(o: any): o is NavigationForwardMessage {
+  return o.type === 'forward'
+}
+
+export interface NavigationReloadMessage {
+  type: 'reload'
+  uuid: string
+}
+export function isNavigationReloadMessage(o: any): o is NavigationReloadMessage {
+  return o.type === 'reload'
+}

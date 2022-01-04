@@ -6,6 +6,9 @@ export interface IRifeAPI {
   position: (uuid: string, rect: {x: number, y: number, width: number, height: number}) => Promise<void>,
   create: (navigator: Navigator, rect: {x: number, y: number, width: number, height: number}) => Promise<void>,
   delete: (uuid: string) => Promise<void>,
+  back: (uuid: string, query?: boolean) => Promise<boolean>,
+  forward: (uuid: string, query?: boolean) => Promise<boolean>,
+  reload: (uuid: string) => Promise<void>,
 }
 
 declare global {

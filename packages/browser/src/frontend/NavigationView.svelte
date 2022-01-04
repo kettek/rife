@@ -23,6 +23,9 @@
   $: currentHistory = activeNavigator?.history
   $: currentHistoryEntry = (currentHistory && activeNavigator) ? currentHistory[activeNavigator.activeHistoryPosition] : { location: '', title: '', favicon: '' }
 
+  let canGoBack: boolean = false
+  let canGoForward: boolean = false
+
   let lastActiveNavigatorUUID: string = ''
   $: {
     if (stack.activeNavigatorUUID !== lastActiveNavigatorUUID) {
@@ -36,6 +39,13 @@
       console.log('show', stack.activeNavigatorUUID)
 
       lastActiveNavigatorUUID = stack.activeNavigatorUUID
+
+      window.rife.back(stack.activeNavigatorUUID, true).then((can: boolean) => {
+        canGoBack = can
+      })
+      window.rife.forward(stack.activeNavigatorUUID, true).then((can: boolean) => {
+        canGoForward = can
+      })
     }
   }
 
@@ -58,6 +68,23 @@
       $dragCount++
     }
   }
+
+  async function goBack() {
+    if (!activeNavigator) return
+    window.rife.back(activeNavigator.uuid)
+
+    canGoForward = await window.rife.forward(activeNavigator.uuid, true)
+  }
+  async function goForward() {
+    if (!activeNavigator) return
+    window.rife.forward(activeNavigator.uuid)
+    canGoBack = await window.rife.back(activeNavigator.uuid, true)
+  }
+  function goReload() {
+    if (!activeNavigator) return
+    window.rife.reload(activeNavigator.uuid)
+  }
+
   let navElement: HTMLElement
 
   onMount(() => {
@@ -81,9 +108,9 @@
   ondragover='return false'
 >
   <nav>
-    <button>left</button>
-    <button>right</button>
-    <button>reload</button>
+    <button disabled={!canGoBack} on:click={goBack}>left</button>
+    <button disabled={!canGoForward} on:click={goForward}>right</button>
+    <button on:click={goReload}>reload</button>
     {#if currentHistory}
       <input type='search' placeholder='https://...' />
     {:else}

@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { isNavigationShowMessage, isNavigationHideMessage, isNavigationPositionMessage, isNavigationCreateMessage, isNavigationDeleteMessage, isNavigationNavigateMessage } from '../api/navigation'
+import { isNavigationShowMessage, isNavigationHideMessage, isNavigationPositionMessage, isNavigationCreateMessage, isNavigationDeleteMessage, isNavigationNavigateMessage, isNavigationBackMessage, isNavigationForwardMessage, isNavigationReloadMessage } from '../api/navigation'
 import { createNavigator, deleteNavigator, getNavigator } from './navigators'
 import { mainWindow } from './window'
 
@@ -29,5 +29,26 @@ ipcMain.handle('rife', async (_: Electron.IpcMainInvokeEvent, o: any): Promise<a
     let n = getNavigator(o.uuid)
     if (!n) return
     n.view.webContents.loadURL(o.url)
+  } else if (isNavigationBackMessage(o)) {
+    let n = getNavigator(o.uuid)
+    if (!n) return
+    console.log(o)
+    if (o.query) {
+      return n.view.webContents.canGoBack()
+    } else {
+      n.view.webContents.goBack()
+    }
+  } else if (isNavigationForwardMessage(o)) {
+    let n = getNavigator(o.uuid)
+    if (!n) return
+    if (o.query) {
+      return n.view.webContents.canGoForward()
+    } else {
+      n.view.webContents.goForward()
+    }
+  } else if (isNavigationReloadMessage(o)) {
+    let n = getNavigator(o.uuid)
+    if (!n) return
+    n.view.webContents.reload()
   }
 })

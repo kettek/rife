@@ -23,5 +23,19 @@ contextBridge.exposeInMainWorld('rife', {
   delete: (uuid: string) => ipcRenderer.invoke('rife', {
     type: 'delete',
     uuid,
-  })
+  }),
+  back: (uuid: string, query?: boolean) => ipcRenderer.invoke('rife', {
+    type: 'back',
+    uuid,
+    query,
+  }),
+  forward: (uuid: string, query?: boolean) => ipcRenderer.invoke('rife', {
+    type: 'forward',
+    uuid,
+    query,
+  }),
+  reload: (uuid: string) => ipcRenderer.invoke('rife', {
+    type: 'reload',
+    uuid,
+  }),
 })
