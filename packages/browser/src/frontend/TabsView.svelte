@@ -65,6 +65,12 @@
   function handleTabClick(e: MouseEvent) {
     activeUUID = e.target.dataset.tabuuid
   }
+  function handleTabDelete(uuid: string) {
+    console.log('TODO: remove', uuid)
+  }
+  function handleTabAdd() {
+    console.log('TODO: add')
+  }
 </script>
 
 <main
@@ -88,8 +94,14 @@
       <span>
         {navigator.title||'New Tab'}
       </span>
+      <aside on:click|stopPropagation|preventDefault={()=>handleTabDelete(navigator.uuid)}>
+        x
+      </aside>
     </div>
   {/each}
+  <div on:click={handleTabAdd}>
+    +
+  </div>
 </main>
 
 <style>
@@ -102,7 +114,7 @@
   }
   div {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
   }
   div.active {
