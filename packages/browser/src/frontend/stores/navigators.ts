@@ -1,4 +1,5 @@
 import { writable, get, Updater } from 'svelte/store'
+import { isNavigationFaviconEvent, isNavigationNavigateEvent, isNavigationShowEvent, isNavigationTitleEvent, NavigationEvent } from '../../api/navigation'
 import type { Navigator } from '../interfaces/Navigator'
 
 //import { ipcRenderer } from 'electron'
@@ -16,7 +17,6 @@ export const navigatorStore = {
     if (v.find(v=>v.uuid===n.uuid)) {
       return
     }
-    console.log('add', n)
     window.rife.create(n, {x: 0, y: 0, width: 0, height: 0})
     v.push(n)
     set(v)
@@ -32,3 +32,27 @@ export const navigatorStore = {
     update(updater)
   }
 }
+
+// Bind navigation updates from main process.
+window.rife.registerToAll((o: NavigationEvent) => {
+  if (isNavigationNavigateEvent(o)) {
+    let ns = get(navigatorStore)
+    let n = ns.find(v=>v.uuid === o.uuid)
+    if (!n) return
+    n.title = o.title
+    n.url = o.url
+    navigatorStore.set(ns)
+  } else if (isNavigationShowEvent(o)) {
+  } else if (isNavigationTitleEvent(o)) {
+    let ns = get(navigatorStore)
+    let n = ns.find(v=>v.uuid === o.uuid)
+    if (!n) return
+    n.title = o.title
+    navigatorStore.set(ns)
+  } else if (isNavigationFaviconEvent(o)) {
+    let ns = get(navigatorStore)
+    let n = ns.find(v=>v.uuid === o.uuid)
+    if (!n) return
+    console.log('set favicon to one of', o.favicons)
+  }
+})

@@ -19,12 +19,31 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
   n.view.webContents.loadURL('https://kettek.net')
   n.view.setBounds(rect)
 
+  n.view.webContents.on('page-title-updated', (_: Electron.Event, title: string, explicitSet: boolean) => {
+    if (explicitSet) {
+      mainWindow?.webContents.send('rife', {
+        type: 'title',
+        uuid: n.navigator.uuid,
+        title: title,
+      })
+    }
+  })
+
+  n.view.webContents.on('page-favicon-updated', (_: Electron.Event, favicons: string[]) => {
+    mainWindow?.webContents.send('rife', {
+      type: 'favicon',
+      uuid: n.navigator.uuid,
+      favicons,
+    })
+  })
+
   n.view.webContents.on('did-navigate', (_: Electron.Event, url: string) => {
     console.log(n.navigator.uuid, 'did-navigate', url)
     mainWindow?.webContents.send('rife', {
       type: 'navigate',
       uuid: n.navigator.uuid,
       url,
+      title: n.view.webContents.getTitle(),
     })
   })
 
@@ -35,6 +54,7 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
       uuid: n.navigator.uuid,
       url,
       inPage: true,
+      title: n.view.webContents.getTitle(),
     })
   })
 

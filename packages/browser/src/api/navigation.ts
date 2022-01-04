@@ -129,3 +129,21 @@ export interface NavigationShowEvent {
 export function isNavigationShowEvent(o: any): o is NavigationShowEvent {
   return o.type === 'show'
 }
+
+export interface NavigationTitleEvent {
+  type: 'title'
+  uuid: string
+  title: string
+}
+export function isNavigationTitleEvent(o: any): o is NavigationTitleEvent {
+  return o.type === 'title'
+}
+
+export interface NavigationFaviconEvent {
+  type: 'favicon'
+  uuid: string
+  favicons: string[]
+}
+export function isNavigationFaviconEvent(o: any): o is NavigationFaviconEvent {
+  return o.type === 'favicon'
+}
