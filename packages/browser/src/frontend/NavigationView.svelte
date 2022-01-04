@@ -12,7 +12,8 @@
   import type { Navigator } from './interfaces/Navigator'
   import type { NavigatorStack } from './interfaces/Stack'
   import { navigatorStore } from './stores/navigators'
-
+  import type { NavigationEvent } from '../api/navigation'
+  import { isNavigationNavigateEvent } from '../api/navigation'
   import { dragCount } from './stores/tabs'
 
   export let stack: NavigatorStack
@@ -25,10 +26,14 @@
 
   let canGoBack: boolean = false
   let canGoForward: boolean = false
+  let currentURL: string = ''
 
   let lastActiveNavigatorUUID: string = ''
   $: {
     if (stack.activeNavigatorUUID !== lastActiveNavigatorUUID) {
+      window.rife.unregister(lastActiveNavigatorUUID, handleNavigation)
+      window.rife.register(stack.activeNavigatorUUID, handleNavigation)
+
       console.log('hide', lastActiveNavigatorUUID)
       window.rife.hide(lastActiveNavigatorUUID)
 
@@ -46,6 +51,14 @@
       window.rife.forward(stack.activeNavigatorUUID, true).then((can: boolean) => {
         canGoForward = can
       })
+    }
+  }
+  async function handleNavigation(o: NavigationEvent) {
+    if (!activeNavigator) return
+    if (isNavigationNavigateEvent(o)) {
+      currentURL = o.url
+      canGoBack = await window.rife.back(activeNavigator.uuid, true)
+      canGoForward = await window.rife.forward(activeNavigator.uuid, true)
     }
   }
 
@@ -72,13 +85,10 @@
   async function goBack() {
     if (!activeNavigator) return
     window.rife.back(activeNavigator.uuid)
-
-    canGoForward = await window.rife.forward(activeNavigator.uuid, true)
   }
   async function goForward() {
     if (!activeNavigator) return
     window.rife.forward(activeNavigator.uuid)
-    canGoBack = await window.rife.back(activeNavigator.uuid, true)
   }
   function goReload() {
     if (!activeNavigator) return
@@ -97,6 +107,7 @@
     })
     return () => {
       erd.removeAllListeners(navElement)
+      window.rife.unregister(lastActiveNavigatorUUID, handleNavigation)
     }
   })
 </script>
@@ -111,11 +122,7 @@
     <button disabled={!canGoBack} on:click={goBack}>left</button>
     <button disabled={!canGoForward} on:click={goForward}>right</button>
     <button on:click={goReload}>reload</button>
-    {#if currentHistory}
-      <input type='search' placeholder='https://...' />
-    {:else}
-      <input type='search' placeholder='https://...' bind:value={currentHistoryEntry.location} />
-    {/if}
+    <input type='search' placeholder='https://...' bind:value={currentURL} />
   </nav>
   <article bind:this={navElement}>
   </article>

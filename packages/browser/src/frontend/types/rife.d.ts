@@ -1,4 +1,5 @@
 import { Navigator } from '../interfaces/Navigator'
+import type { RegisterCallback } from '../../api/navigation'
 
 export interface IRifeAPI {
   show: (uuid: string) => Promise<void>,
@@ -9,6 +10,8 @@ export interface IRifeAPI {
   back: (uuid: string, query?: boolean) => Promise<boolean>,
   forward: (uuid: string, query?: boolean) => Promise<boolean>,
   reload: (uuid: string) => Promise<void>,
+  register: (uuid: string, callback: RegisterCallback) => Promise<any>,
+  unregister: (uuid: string, callback: RegisterCallback) => Promise<any>,
 }
 
 declare global {

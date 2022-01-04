@@ -1,4 +1,5 @@
 import { BrowserView } from 'electron'
+import { mainWindow } from './window'
 
 import { Navigator } from '../frontend/interfaces/Navigator'
 
@@ -20,10 +21,21 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
 
   n.view.webContents.on('did-navigate', (_: Electron.Event, url: string) => {
     console.log(n.navigator.uuid, 'did-navigate', url)
+    mainWindow?.webContents.send('rife', {
+      type: 'navigate',
+      uuid: n.navigator.uuid,
+      url,
+    })
   })
 
   n.view.webContents.on('did-navigate-in-page', (_: Electron.Event, url: string) => {
     console.log(n.navigator.uuid, 'did-navigate-in-page', url)
+    mainWindow?.webContents.send('rife', {
+      type: 'navigate',
+      uuid: n.navigator.uuid,
+      url,
+      inPage: true,
+    })
   })
 
   n.view.webContents.on('render-process-gone', (_: Electron.Event, details: Electron.RenderProcessGoneDetails) => {

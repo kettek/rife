@@ -96,3 +96,25 @@ export interface NavigationReloadMessage {
 export function isNavigationReloadMessage(o: any): o is NavigationReloadMessage {
   return o.type === 'reload'
 }
+
+export interface NavigationEvent {
+  type: string
+  uuid: string
+}
+export function isNavigationEvent(o: any): o is NavigationEvent {
+  return o.type !== undefined && o.uuid !== undefined
+}
+
+export interface NavigationNavigateEvent {
+  type: 'navigate'
+  uuid: string
+  url: string
+  inPage?: boolean
+}
+export function isNavigationNavigateEvent(o: any): o is NavigationNavigateEvent {
+  return o.type === 'navigate'
+}
+
+export interface RegisterCallback {
+  (o: NavigationEvent): void
+}

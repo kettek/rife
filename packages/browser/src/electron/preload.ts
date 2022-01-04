@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import { NavigationEvent, RegisterCallback } from '../api/navigation'
 import { Navigator } from '../frontend/interfaces/Navigator'
 
 contextBridge.exposeInMainWorld('rife', {
@@ -38,4 +39,31 @@ contextBridge.exposeInMainWorld('rife', {
     type: 'reload',
     uuid,
   }),
+  register: (uuid: string, callback: RegisterCallback) => {
+    if (!registered[uuid]) {
+      registered[uuid] = []
+    }
+    if (!(registered[uuid].find(v=>v===callback))) {
+      registered[uuid].push(callback)
+    }
+    if (registered[uuid].length === 0) {
+      delete registered[uuid]
+    }
+  },
+  unregister: (uuid: string, callback: RegisterCallback) => {
+    if (!registered[uuid]) return
+    registered[uuid] = registered[uuid].filter(v=>v!==callback)
+    if (registered[uuid].length === 0) {
+      delete registered[uuid]
+    }
+  },
+})
+
+let registered: Record<string, RegisterCallback[]> = {}
+
+ipcRenderer.on('rife', (_: Electron.IpcRendererEvent, o: NavigationEvent) => {
+  if (!registered[o.uuid]) return
+  for (let cb of registered[o.uuid]) {
+    cb(o)
+  }
 })
