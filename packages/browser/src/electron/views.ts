@@ -3,7 +3,7 @@ import { isNavigationShowMessage, isNavigationHideMessage, isNavigationPositionM
 import { createNavigator, deleteNavigator, getNavigator } from './navigators'
 import { mainWindow } from './window'
 
-ipcMain.handle('navigation', async (_: Electron.IpcMainInvokeEvent, o: any): Promise<any> => {
+ipcMain.handle('rife', async (_: Electron.IpcMainInvokeEvent, o: any): Promise<any> => {
   if (isNavigationShowMessage(o)) {
     let n = getNavigator(o.uuid)
     if (!n) return

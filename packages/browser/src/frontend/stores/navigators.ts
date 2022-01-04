@@ -3,7 +3,6 @@ import type { Navigator } from '../interfaces/Navigator'
 
 //import { ipcRenderer } from 'electron'
 //const { ipcRenderer } = require('electron')
-console.log((globalThis as any).navigation)
 
 const { subscribe, set, update } = writable<Navigator[]>([])
 
@@ -18,14 +17,14 @@ export const navigatorStore = {
       return
     }
     console.log('add', n)
-    ;(globalThis as any).navigation.create(n, {x: 0, y: 0, width: 0, height: 0})
+    window.rife.create(n, {x: 0, y: 0, width: 0, height: 0})
     v.push(n)
     set(v)
   },
   remove: (n: Navigator) => {
     let v = get(navigatorStore)
     v = v.filter(v=>v.uuid!==n.uuid)
-    ;(globalThis as any).navigation.delete(n.uuid)
+    window.rife.delete(n.uuid)
     set(v)
   },
   update: (updater: Updater<Navigator[]>) => {
