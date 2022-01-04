@@ -8,6 +8,8 @@ export interface History {
 
 export interface Navigator {
   uuid: string
+  title: string
+  url: string
   history: History[]
   activeHistoryPosition: number
 }
@@ -15,6 +17,8 @@ export function mkNavigator(): Navigator {
   return {
     uuid: v4(),
     history: [],
+    title: '',
+    url: '',
     activeHistoryPosition: 0,
   }
 }
