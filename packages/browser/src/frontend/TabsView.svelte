@@ -1,4 +1,6 @@
 <script lang='ts'>
+  import { mkNavigator } from './interfaces/Navigator'
+
   import { navigatorStore } from './stores/navigators'
 
   export let uuids: string[]
@@ -70,7 +72,10 @@
     uuids = uuids.filter(v=>v!==uuid)
   }
   function handleTabAdd() {
-    console.log('TODO: add')
+    let n = mkNavigator()
+    navigatorStore.add(n)
+    uuids.push(n.uuid)
+    uuids = [...uuids]
   }
 </script>
 
