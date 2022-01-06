@@ -21,10 +21,10 @@ export const navigatorStore = {
     v.push(n)
     set(v)
   },
-  remove: (n: Navigator) => {
+  remove: (uuid: string) => {
     let v = get(navigatorStore)
-    v = v.filter(v=>v.uuid!==n.uuid)
-    window.rife.delete(n.uuid)
+    v = v.filter(v=>v.uuid!==uuid)
+    window.rife.delete(uuid)
     set(v)
   },
   update: (updater: Updater<Navigator[]>) => {
