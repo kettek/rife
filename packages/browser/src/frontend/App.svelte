@@ -34,7 +34,7 @@
 <main>
   <Menu></Menu>
   <SplitView type='horizontal' pos={25}>
-    <TabsView slot='a' uuids={$navigatorStore.map(v=>v.uuid)}></TabsView>
+    <TabsView slot='a' uuids={$navigatorStore.map(v=>v.uuid)} removeOnDrag={false} addOnDrop={false}></TabsView>
     <StackContainerView slot='b' stack={$stackStore}></StackContainerView>
   </SplitView>
 </main>

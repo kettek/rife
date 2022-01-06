@@ -6,6 +6,11 @@
   export let uuids: string[]
   export let activeUUID: string
   export let horizontal: boolean = false
+
+  // For the top-level tabs view.
+  export let removeOnDrag: boolean = true
+  export let addOnDrop: boolean = true
+
   import { dragCount } from './stores/tabs'
 
   $: navigators = $navigatorStore.filter(v=>uuids.includes(v.uuid))
@@ -20,11 +25,11 @@
     pendingDragCount = $dragCount+1
   }
   function handleDragEnd(e: DragEvent) {
+    if (!removeOnDrag) return
     if (!e.dataTransfer || !e.target) return
     console.log('drag end')
     if (pendingDragCount === $dragCount) {
       uuids = uuids.filter(v=>v!==pendingDragUUID)
-      console.log('successful drop! remove from ourself?')
     }
   }
   //
@@ -33,6 +38,7 @@
   function handleDragLeave(e: DragEvent) {
   }
   function handleDrop(e: DragEvent) {
+    if (!addOnDrop) return
     let uuid = e.dataTransfer?.getData('text')
     if (!uuid) return
     e.preventDefault()
@@ -50,6 +56,7 @@
   }
 
   function handleTabDrop(e: DragEvent) {
+    if (!addOnDrop) return
     let uuid = e.dataTransfer?.getData('text')
     if (!uuid) return
     e.preventDefault()
