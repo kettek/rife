@@ -66,7 +66,8 @@
     activeUUID = e.target.dataset.tabuuid
   }
   function handleTabDelete(uuid: string) {
-    console.log('TODO: remove', uuid)
+    navigatorStore.remove(uuid)
+    uuids = uuids.filter(v=>v!==uuid)
   }
   function handleTabAdd() {
     console.log('TODO: add')
