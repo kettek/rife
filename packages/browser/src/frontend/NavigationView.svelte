@@ -95,8 +95,44 @@
   function handleSearchKeyup(e: KeyboardEvent) {
     if (!activeNavigator) return
     if (e.code === 'Enter') {
+      // FIXME: We should maintain the old URL here and only adjust the actual request.
+      try {
+        new URL(currentURL)
+      } catch(e: any) {
+        currentURL = 'https://'+currentURL
+      }
       window.rife.navigate(activeNavigator.uuid, currentURL)
     }
+  }
+  function handleSearchFocus(e: MouseEvent) {
+    if (e.button !== 0) return
+
+    let target = <HTMLInputElement>(e.target)
+
+    if (document.activeElement === target) return
+    
+    let hasMoved = false
+    let mouseup = (e2: MouseEvent) => {
+      if (e2.button !== 0) return
+      if (!hasMoved) {
+        target.setSelectionRange(0, target.value.length)
+      }
+      window.removeEventListener('mousemove', mousemove)
+      window.removeEventListener('mouseup', mouseup)
+    }
+    let mousemove = (_: MouseEvent) => {
+      hasMoved = true
+    }
+
+    window.addEventListener('mousemove', mousemove)
+    window.addEventListener('mouseup', mouseup)
+  }
+  function handleSearchBlur(e: FocusEvent) {
+    let target = <HTMLInputElement>(e.target)
+    target.setSelectionRange(0, 0)
+
+    // For some ridiculuous reason, we need to call blur on the activeElement if we remove focus by clicking on a BrowserView.
+    document.activeElement?.blur()
   }
 
   async function goBack() {
@@ -143,7 +179,7 @@
     <button disabled={!canGoBack} on:click={goBack}>left</button>
     <button disabled={!canGoForward} on:click={goForward}>right</button>
     <button on:click={goReload}>reload</button>
-    <input type='search' placeholder='https://...' bind:value={currentURL} on:keyup={handleSearchKeyup}/>
+    <input type='search' placeholder='https://...' bind:value={currentURL} on:keyup={handleSearchKeyup} on:mousedown={handleSearchFocus} on:blur={handleSearchBlur}/>
     <button on:click={goDevtools}>dev</button>
   </nav>
   <article bind:this={navElement}>
