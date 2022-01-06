@@ -113,6 +113,22 @@ export function isNavigationDevtoolsEvent(o: any): o is NavigationDevtoolsEvent 
   return o.type === 'devtools'
 }
 
+export interface NavigationCheckAdblockMessage {
+  type: 'adblock-check'
+  uuid: string
+}
+export function isNavigationCheckAdblockMessage(o: any): o is NavigationCheckAdblockMessage {
+  return o.type === 'adblock-check'
+}
+export interface NavigationCheckAdblockEvent  {
+  type: 'adblock-check'
+  uuid: string
+  enabled: boolean
+}
+export function isNavigationCheckAdblockEvent(o: any): o is NavigationCheckAdblockEvent {
+  return o.type === 'adblock-check'
+}
+
 export interface NavigationEvent {
   type: string
   uuid: string

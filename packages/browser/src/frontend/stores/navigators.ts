@@ -1,5 +1,5 @@
 import { writable, get, Updater } from 'svelte/store'
-import { isNavigationDevtoolsEvent, isNavigationFaviconEvent, isNavigationNavigateEvent, isNavigationShowEvent, isNavigationTitleEvent, NavigationEvent } from '../../api/navigation'
+import { isNavigationCheckAdblockEvent, isNavigationDevtoolsEvent, isNavigationFaviconEvent, isNavigationNavigateEvent, isNavigationShowEvent, isNavigationTitleEvent, NavigationEvent } from '../../api/navigation'
 import type { Navigator } from '../interfaces/Navigator'
 
 //import { ipcRenderer } from 'electron'
@@ -57,5 +57,12 @@ window.rife.registerToAll((o: NavigationEvent) => {
     navigatorStore.set(ns)
   } else if (isNavigationDevtoolsEvent(o)) {
     console.log('devtools', o)
+  } else if (isNavigationCheckAdblockEvent(o)) {
+    let ns = get(navigatorStore)
+    let n = ns.find(v=>v.uuid === o.uuid)
+    if (!n) return
+    console.log('set adblock')
+    n.adblock = o.enabled
+    navigatorStore.set(ns)
   }
 })

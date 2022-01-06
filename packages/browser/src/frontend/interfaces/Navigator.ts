@@ -13,6 +13,7 @@ export interface Navigator {
   history: History[]
   activeHistoryPosition: number
   favicons: string[] // current list of favicons
+  adblock: boolean // FIXME: This needs to be part of an extensions system.
 }
 export function mkNavigator(): Navigator {
   return {
@@ -22,5 +23,6 @@ export function mkNavigator(): Navigator {
     url: '',
     activeHistoryPosition: 0,
     favicons: [],
+    adblock: false,
   }
 }

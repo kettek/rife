@@ -59,6 +59,10 @@ contextBridge.exposeInMainWorld('rife', {
     type: 'devtools',
     uuid,
   }),
+  toggleAdblock: (uuid: string) => ipcRenderer.invoke('rife', {
+    type: 'adblock-check',
+    uuid,
+  }),
   unregister: (uuid: string, callback: RegisterCallback) => {
     if (!registered[uuid]) return
     registered[uuid] = registered[uuid].filter(v=>v!==callback)

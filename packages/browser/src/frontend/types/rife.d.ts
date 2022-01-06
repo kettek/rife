@@ -12,6 +12,7 @@ export interface IRifeAPI {
   navigate: (uuid: string, url: string) => Promise<void>,
   reload: (uuid: string) => Promise<void>,
   toggleDevtools: (uuid: string) => Promise<void>,
+  toggleAdblock: (uuid: string) => Promise<boolean>,
   register: (uuid: string, callback: RegisterCallback) => Promise<any>,
   unregister: (uuid: string, callback: RegisterCallback) => Promise<any>,
   registerToAll: (callback: RegisterCallback) => Promise<any>,

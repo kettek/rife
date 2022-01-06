@@ -7,6 +7,7 @@ import { join } from 'path'
 import logger from './utils/logger'
 import settings from './utils/settings'
 import { clearNavigators, navigators } from './navigators'
+import { loadAdblocker } from './adblocker'
 
 import './views'
 
@@ -19,7 +20,8 @@ logger.info(settings.get('check') ? 'Settings store works correctly.' : 'Setting
 
 import { mainWindow, setMainWindow } from './window'
 
-const createWindow = () => {
+const createWindow = async () => {
+  await loadAdblocker()
   setMainWindow(new BrowserWindow({
     width: 900,
     height: 680,

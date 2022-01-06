@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron'
-import { isNavigationShowMessage, isNavigationHideMessage, isNavigationPositionMessage, isNavigationCreateMessage, isNavigationDeleteMessage, isNavigationNavigateMessage, isNavigationBackMessage, isNavigationForwardMessage, isNavigationReloadMessage, isNavigationToggleDevtoolsMessage } from '../api/navigation'
+import { isNavigationShowMessage, isNavigationHideMessage, isNavigationPositionMessage, isNavigationCreateMessage, isNavigationDeleteMessage, isNavigationNavigateMessage, isNavigationBackMessage, isNavigationForwardMessage, isNavigationReloadMessage, isNavigationToggleDevtoolsMessage, isNavigationCheckAdblockMessage } from '../api/navigation'
+import { blocker } from './adblocker'
 import { createNavigator, deleteNavigator, getNavigator } from './navigators'
 import { mainWindow } from './window'
 
@@ -62,5 +63,18 @@ ipcMain.handle('rife', async (_: Electron.IpcMainInvokeEvent, o: any): Promise<a
     let n = getNavigator(o.uuid)
     if (!n) return
     n.view.webContents.toggleDevTools()
+  } else if (isNavigationCheckAdblockMessage(o)) {
+    let n = getNavigator(o.uuid)
+    if (!n) return
+    if (blocker.isBlockingEnabled(n.view.webContents.session)) {
+      blocker.disableBlockingInSession(n.view.webContents.session)
+    } else {
+      blocker.enableBlockingInSession(n.view.webContents.session)
+    }
+    mainWindow?.webContents.send('rife', {
+      type: 'adblock-check',
+      uuid: n.navigator.uuid,
+      enabled: blocker.isBlockingEnabled(n.view.webContents.session),
+    })
   }
 })

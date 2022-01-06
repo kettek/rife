@@ -2,6 +2,7 @@ import { BrowserView } from 'electron'
 import { mainWindow } from './window'
 
 import { Navigator } from '../frontend/interfaces/Navigator'
+import { blocker } from './adblocker'
 
 export interface NavigatorContainer {
   navigator: Navigator,
@@ -90,6 +91,14 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
       uuid: n.navigator.uuid,
       state: 'focused',
     })
+  })
+
+  // Enable adblock per default.
+  blocker.enableBlockingInSession(n.view.webContents.session)
+  mainWindow?.webContents.send('rife', {
+    type: 'adblock-check',
+    uuid: n.navigator.uuid,
+    enabled: true,
   })
 
   navigators.push(n)

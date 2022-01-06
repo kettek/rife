@@ -151,6 +151,10 @@
     if (!activeNavigator) return
     window.rife.toggleDevtools(activeNavigator.uuid)
   }
+  function goAdblock() {
+    if (!activeNavigator) return
+    window.rife.toggleAdblock(activeNavigator.uuid)
+  }
 
   let navElement: HTMLElement
 
@@ -181,6 +185,10 @@
     <button on:click={goReload}>reload</button>
     <input type='search' placeholder='https://...' bind:value={currentURL} on:keyup={handleSearchKeyup} on:mousedown={handleSearchFocus} on:blur={handleSearchBlur}/>
     <button on:click={goDevtools}>dev</button>
+    <label>
+      <input type='checkbox' checked={activeNavigator?.adblock} on:change={goAdblock}>
+      adblock
+    </label>
   </nav>
   <article bind:this={navElement}>
   </article>
@@ -189,7 +197,7 @@
 <style>
   nav {
     display: grid;
-    grid-template-columns: auto auto auto minmax(0, 1fr) auto;
+    grid-template-columns: auto auto auto minmax(0, 1fr) auto auto;
   }
   article {
     width: 100%;
