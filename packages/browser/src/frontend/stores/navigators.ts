@@ -1,5 +1,5 @@
 import { writable, get, Updater } from 'svelte/store'
-import { isNavigationFaviconEvent, isNavigationNavigateEvent, isNavigationShowEvent, isNavigationTitleEvent, NavigationEvent } from '../../api/navigation'
+import { isNavigationDevtoolsEvent, isNavigationFaviconEvent, isNavigationNavigateEvent, isNavigationShowEvent, isNavigationTitleEvent, NavigationEvent } from '../../api/navigation'
 import type { Navigator } from '../interfaces/Navigator'
 
 //import { ipcRenderer } from 'electron'
@@ -55,5 +55,7 @@ window.rife.registerToAll((o: NavigationEvent) => {
     if (!n) return
     n.favicons = o.favicons
     navigatorStore.set(ns)
+  } else if (isNavigationDevtoolsEvent(o)) {
+    console.log('devtools', o)
   }
 })

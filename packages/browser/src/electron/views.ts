@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { isNavigationShowMessage, isNavigationHideMessage, isNavigationPositionMessage, isNavigationCreateMessage, isNavigationDeleteMessage, isNavigationNavigateMessage, isNavigationBackMessage, isNavigationForwardMessage, isNavigationReloadMessage } from '../api/navigation'
+import { isNavigationShowMessage, isNavigationHideMessage, isNavigationPositionMessage, isNavigationCreateMessage, isNavigationDeleteMessage, isNavigationNavigateMessage, isNavigationBackMessage, isNavigationForwardMessage, isNavigationReloadMessage, isNavigationToggleDevtoolsMessage } from '../api/navigation'
 import { createNavigator, deleteNavigator, getNavigator } from './navigators'
 import { mainWindow } from './window'
 
@@ -58,5 +58,9 @@ ipcMain.handle('rife', async (_: Electron.IpcMainInvokeEvent, o: any): Promise<a
     let n = getNavigator(o.uuid)
     if (!n) return
     n.view.webContents.reload()
+  } else if (isNavigationToggleDevtoolsMessage(o)) {
+    let n = getNavigator(o.uuid)
+    if (!n) return
+    n.view.webContents.toggleDevTools()
   }
 })

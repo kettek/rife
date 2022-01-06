@@ -111,6 +111,10 @@
     if (!activeNavigator) return
     window.rife.reload(activeNavigator.uuid)
   }
+  function goDevtools() {
+    if (!activeNavigator) return
+    window.rife.toggleDevtools(activeNavigator.uuid)
+  }
 
   let navElement: HTMLElement
 
@@ -140,6 +144,7 @@
     <button disabled={!canGoForward} on:click={goForward}>right</button>
     <button on:click={goReload}>reload</button>
     <input type='search' placeholder='https://...' bind:value={currentURL} on:keyup={handleSearchKeyup}/>
+    <button on:click={goDevtools}>dev</button>
   </nav>
   <article bind:this={navElement}>
   </article>
@@ -148,7 +153,7 @@
 <style>
   nav {
     display: grid;
-    grid-template-columns: auto auto auto minmax(0, 1fr);
+    grid-template-columns: auto auto auto minmax(0, 1fr) auto;
   }
   article {
     width: 100%;

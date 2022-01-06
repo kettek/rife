@@ -97,6 +97,22 @@ export function isNavigationReloadMessage(o: any): o is NavigationReloadMessage 
   return o.type === 'reload'
 }
 
+export interface NavigationToggleDevtoolsMessage {
+  type: 'devtools'
+  uuid: string
+}
+export function isNavigationToggleDevtoolsMessage(o: any): o is NavigationToggleDevtoolsMessage {
+  return o.type === 'devtools'
+}
+export interface NavigationDevtoolsEvent {
+  type: 'devtools'
+  uuid: string
+  state: 'open' | 'closed' | 'focused'
+}
+export function isNavigationDevtoolsEvent(o: any): o is NavigationDevtoolsEvent {
+  return o.type === 'devtools'
+}
+
 export interface NavigationEvent {
   type: string
   uuid: string

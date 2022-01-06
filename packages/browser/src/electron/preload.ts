@@ -55,6 +55,10 @@ contextBridge.exposeInMainWorld('rife', {
       delete registered[uuid]
     }
   },
+  toggleDevtools: (uuid: string) => ipcRenderer.invoke('rife', {
+    type: 'devtools',
+    uuid,
+  }),
   unregister: (uuid: string, callback: RegisterCallback) => {
     if (!registered[uuid]) return
     registered[uuid] = registered[uuid].filter(v=>v!==callback)

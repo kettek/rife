@@ -70,6 +70,28 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
     console.log(n.navigator.uuid, 'responsive')
   })
 
+  n.view.webContents.on('devtools-opened', (_: Electron.Event) => {
+    mainWindow?.webContents.send('rife', {
+      type: 'devtools',
+      uuid: n.navigator.uuid,
+      state: 'open',
+    })
+  })
+  n.view.webContents.on('devtools-closed', (_: Electron.Event) => {
+    mainWindow?.webContents.send('rife', {
+      type: 'devtools',
+      uuid: n.navigator.uuid,
+      state: 'closed',
+    })
+  })
+  n.view.webContents.on('devtools-focused', (_: Electron.Event) => {
+    mainWindow?.webContents.send('rife', {
+      type: 'devtools',
+      uuid: n.navigator.uuid,
+      state: 'focused',
+    })
+  })
+
   navigators.push(n)
   return n
 }
