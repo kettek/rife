@@ -9,24 +9,51 @@ export const stackStore = {
   set: (value: NavigatorStack) => {
     return set(value)
   },
-  move: (uuid: string, containerOf: string, side: string) => {
+  delete: (uuid: string) => {
     let ns = get(stackStore)
-    
-    let findContainer = (stack: NavigatorStack, uuid: string): NavigatorStack|undefined => {
+
+    let find = (stack: NavigatorStack): NavigatorStack|undefined => {
+      if (stack.uuid === uuid) {
+        return stack
+      }
+      if (stack.stack) {
+        return find(stack.stack)
+      }
+      return undefined
+    }
+    let container = find(ns)
+    if (!container) {
+      throw new Error(`couldn't find stack ${uuid}`)
+    }
+    if (!container.parent) {
+      throw new Error(`${uuid} has no parent, not deleting`)
+    }
+    container.parent.stack = undefined
+    set(ns)
+  },
+  findContainerFor: (uuid: string): NavigatorStack|undefined => {
+    let ns = get(stackStore)
+
+    let find = (stack: NavigatorStack, uuid: string): NavigatorStack|undefined => {
       if (stack.navigatorUUIDs.includes(uuid)) {
         return stack
       }
       if (stack.stack) {
-        return findContainer(stack.stack, uuid)
+        return find(stack.stack, uuid)
       }
       return undefined
     }
 
-    let currentContainer = findContainer(ns, uuid)
+    return find(ns, uuid)
+  },
+  move: (uuid: string, containerOf: string, side: string) => {
+    let ns = get(stackStore)
+    
+    let currentContainer = stackStore.findContainerFor(uuid)
     if (!currentContainer) {
       throw new Error(`couldn't find ${uuid}'s stack`)
     }
-    let targetContainer = findContainer(ns, containerOf)
+    let targetContainer = stackStore.findContainerFor(containerOf)
     if (!targetContainer) {
       throw new Error(`couldn't find ${containerOf}'s stack`)
     }
@@ -43,6 +70,11 @@ export const stackStore = {
       targetContainer.navigatorUUIDs = tempStack.navigatorUUIDs
       targetContainer.stackDir = side==='left'?'horizontal':'vertical'
       targetContainer.stack = newStack
+      // Fix relationships.
+      newStack.parent = targetContainer
+      if (newStack.stack) {
+        newStack.stack.parent = newStack
+      }
     } else if (side === 'right' || side === 'bottom') {
       currentContainer.navigatorUUIDs = currentContainer.navigatorUUIDs.filter(v=>v!==uuid)
       let newStack = mkNavigatorStack([uuid])
@@ -50,9 +82,13 @@ export const stackStore = {
         newStack.stackDir = targetContainer.stackDir
         newStack.stackPos = targetContainer.stackPos
         newStack.stack = targetContainer.stack
+        // Fix relationships.
+        newStack.stack.parent = newStack
       }
       targetContainer.stack = newStack
       targetContainer.stackDir = side==='right'?'horizontal':'vertical'
+      // Fix relationships.
+      targetContainer.stack.parent = targetContainer
     }
     set(ns)
   },

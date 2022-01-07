@@ -7,6 +7,7 @@ export interface NavigatorStack {
   stackDir: 'vertical' | 'horizontal'
   stackPos: number
   stack: NavigatorStack | undefined
+  parent: NavigatorStack | undefined
 }
 
 export function mkNavigatorStack(navigatorUUIDs: string[]): NavigatorStack {
@@ -16,6 +17,7 @@ export function mkNavigatorStack(navigatorUUIDs: string[]): NavigatorStack {
     activeNavigatorUUID: navigatorUUIDs[0]||'',
     stackDir: 'vertical',
     stackPos: 50,
-    stack: undefined
+    stack: undefined,
+    parent: undefined,
   }
 }

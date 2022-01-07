@@ -26,6 +26,7 @@
   let stack = mkNavigatorStack($navigatorStore.filter((_,index)=>index<3).map(v=>v.uuid))
   let substack = mkNavigatorStack($navigatorStore.filter((_,index)=>index>=3).map(v=>v.uuid))
   stack.stack = substack
+  stack.stack.parent = stack
 
   stackStore.set(stack)
 

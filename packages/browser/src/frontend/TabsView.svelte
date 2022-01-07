@@ -1,9 +1,12 @@
 <script lang='ts'>
   import { mkNavigator } from './interfaces/Navigator'
+  import type { NavigatorStack } from './interfaces/Stack'
 
   import { navigatorStore } from './stores/navigators'
+  import { stackStore } from './stores/stacks'
 
   export let uuids: string[]
+  export let stack: NavigatorStack
   export let activeUUID: string
   export let horizontal: boolean = false
 
@@ -84,6 +87,12 @@
     uuids.push(n.uuid)
     uuids = [...uuids]
   }
+  function handleTabsDelete() {
+    for (let uuid of uuids) {
+      navigatorStore.remove(uuid)
+    }
+    stackStore.delete(stack.uuid)
+  }
 </script>
 
 <main
@@ -115,6 +124,11 @@
   <div on:click={handleTabAdd}>
     +
   </div>
+  {#if stack}
+    <div on:click={handleTabsDelete}>
+      x
+    </div>
+  {/if}
 </main>
 
 <style>
