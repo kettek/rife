@@ -20,7 +20,7 @@
   function handleDragStart(e: DragEvent) {
     if (!e.dataTransfer || !e.target) return
     e.dataTransfer.dropEffect = 'move'
-    e.dataTransfer.setData('text', e.target.dataset.tabuuid)
+    e.dataTransfer.setData('x-rife-tab', e.target.dataset.tabuuid)
     pendingDragUUID = e.target.dataset.tabuuid
     pendingDragCount = $dragCount+1
   }
@@ -39,7 +39,7 @@
   }
   function handleDrop(e: DragEvent) {
     if (!addOnDrop) return
-    let uuid = e.dataTransfer?.getData('text')
+    let uuid = e.dataTransfer?.getData('x-rife-tab')
     if (!uuid) return
     e.preventDefault()
     e.stopPropagation()
@@ -57,7 +57,7 @@
 
   function handleTabDrop(e: DragEvent) {
     if (!addOnDrop) return
-    let uuid = e.dataTransfer?.getData('text')
+    let uuid = e.dataTransfer?.getData('x-rife-tab')
     if (!uuid) return
     e.preventDefault()
     e.stopPropagation()

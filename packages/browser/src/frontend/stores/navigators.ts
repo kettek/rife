@@ -1,5 +1,5 @@
 import { writable, get, Updater } from 'svelte/store'
-import { isNavigationCheckAdblockEvent, isNavigationDevtoolsEvent, isNavigationFaviconEvent, isNavigationNavigateEvent, isNavigationShowEvent, isNavigationTitleEvent, NavigationEvent } from '../../api/navigation'
+import { isNavigationCheckAdblockEvent, isNavigationDevtoolsEvent, isNavigationFaviconEvent, isNavigationMoveMessage, isNavigationNavigateEvent, isNavigationShowEvent, isNavigationTitleEvent, NavigationEvent } from '../../api/navigation'
 import type { Navigator } from '../interfaces/Navigator'
 
 //import { ipcRenderer } from 'electron'
@@ -64,5 +64,7 @@ window.rife.registerToAll((o: NavigationEvent) => {
     console.log('set adblock')
     n.adblock = o.enabled
     navigatorStore.set(ns)
+  } else if (isNavigationMoveMessage(o)) {
+    console.log('TODO', o)
   }
 })

@@ -1,8 +1,10 @@
 import { BrowserView } from 'electron'
 import { mainWindow } from './window'
+import { join } from 'path'
 
 import { Navigator } from '../frontend/interfaces/Navigator'
 import { blocker } from './adblocker'
+import { isNavigationMoveMessage } from '../api/navigation'
 
 export interface NavigatorContainer {
   navigator: Navigator,
@@ -15,10 +17,19 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
   if (navigators.find(v=>v.navigator.uuid===navigator.uuid)) return
   let n = {
     navigator,
-    view: new BrowserView()
+    view: new BrowserView({
+      webPreferences: {
+        preload: join(__dirname, 'navigator_preload.js'),
+      }
+    })
   }
   n.view.webContents.loadURL('https://kettek.net')
   n.view.setBounds(rect)
+
+  // TODO: Ensure did-start-loading is the right time to send the tab's uuid.
+  n.view.webContents.on('did-start-loading', () => {
+    n.view.webContents.send('uuid', n.navigator.uuid)
+  })
 
   n.view.webContents.on('page-title-updated', (_: Electron.Event, title: string, explicitSet: boolean) => {
     if (explicitSet) {
@@ -91,6 +102,15 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
       uuid: n.navigator.uuid,
       state: 'focused',
     })
+  })
+
+  // Rife IPC
+  n.view.webContents.on('ipc-message', (_: Electron.Event, channel: string, msg: any) => {
+    if (channel !== 'rife') return
+    // Redirect navigation move messages to the our main window.
+    if (isNavigationMoveMessage(msg)) {
+      mainWindow?.webContents.send('rife', msg)
+    }
   })
 
   // Enable adblock per default.

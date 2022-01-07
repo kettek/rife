@@ -129,6 +129,16 @@ export function isNavigationCheckAdblockEvent(o: any): o is NavigationCheckAdblo
   return o.type === 'adblock-check'
 }
 
+export interface NavigationMoveMessage {
+  type: 'move'
+  uuid: string
+  toContainerOf: string
+  side: 'left' | 'right' | 'top' | 'bottom' | 'center'
+}
+export function isNavigationMoveMessage(o: any): o is NavigationMoveMessage {
+  return o.type === 'move'
+}
+
 export interface NavigationEvent {
   type: string
   uuid: string
