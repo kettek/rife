@@ -26,8 +26,7 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
   n.view.webContents.loadURL('https://kettek.net')
   n.view.setBounds(rect)
 
-  // TODO: Ensure did-start-loading is the right time to send the tab's uuid.
-  n.view.webContents.on('did-start-loading', () => {
+  n.view.webContents.on('did-navigate', () => {
     n.view.webContents.send('uuid', n.navigator.uuid)
   })
 
