@@ -32,7 +32,14 @@
     if (!e.dataTransfer || !e.target) return
     console.log('drag end')
     if (pendingDragCount === $dragCount) {
+      let retargetIndex = -1
+      if (pendingDragUUID === activeUUID) {
+        retargetIndex = uuids.findIndex(v=>v===pendingDragUUID)
+      }
       uuids = uuids.filter(v=>v!==pendingDragUUID)
+      if (retargetIndex >= 0) {
+        activeUUID = uuids[retargetIndex] ?? uuids[retargetIndex-1]
+      }
     }
   }
   //
@@ -79,13 +86,22 @@
   }
   function handleTabDelete(uuid: string) {
     navigatorStore.remove(uuid)
+    let retargetIndex = -1
+    if (uuid === activeUUID) {
+      retargetIndex = uuids.findIndex(v=>v===uuid)
+    }
     uuids = uuids.filter(v=>v!==uuid)
+    if (retargetIndex >= 0) {
+      activeUUID = uuids[retargetIndex] ?? uuids[retargetIndex-1]
+    }
   }
   function handleTabAdd() {
     let n = mkNavigator()
     navigatorStore.add(n)
     uuids.push(n.uuid)
     uuids = [...uuids]
+    // Auto-switch to new tab.
+    activeUUID = n.uuid
   }
   function handleTabsDelete() {
     for (let uuid of uuids) {
