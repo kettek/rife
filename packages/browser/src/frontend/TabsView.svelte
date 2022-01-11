@@ -14,33 +14,12 @@
   export let removeOnDrag: boolean = true
   export let addOnDrop: boolean = true
 
-  import { dragCount } from './stores/tabs'
-
   $: navigators = $navigatorStore.filter(v=>uuids.includes(v.uuid))
 
-  let pendingDragCount = 0
-  let pendingDragUUID: string = ''
   function handleDragStart(e: DragEvent) {
     if (!e.dataTransfer || !e.target) return
     e.dataTransfer.dropEffect = 'move'
     e.dataTransfer.setData('x-rife-tab', e.target.dataset.tabuuid)
-    pendingDragUUID = e.target.dataset.tabuuid
-    pendingDragCount = $dragCount+1
-  }
-  function handleDragEnd(e: DragEvent) {
-    if (!removeOnDrag) return
-    if (!e.dataTransfer || !e.target) return
-    console.log('drag end')
-    if (pendingDragCount === $dragCount) {
-      let retargetIndex = -1
-      if (pendingDragUUID === activeUUID) {
-        retargetIndex = uuids.findIndex(v=>v===pendingDragUUID)
-      }
-      uuids = uuids.filter(v=>v!==pendingDragUUID)
-      if (retargetIndex >= 0) {
-        activeUUID = uuids[retargetIndex] ?? uuids[retargetIndex-1]
-      }
-    }
   }
   //
   function handleDragEnter(e: DragEvent) {
@@ -53,16 +32,12 @@
     if (!uuid) return
     e.preventDefault()
     e.stopPropagation()
-    console.log('drop', uuid, 'at somewhere in list')
 
-    if (uuids.includes(uuid)) {
-      console.log('is from ourself')
-    } else {
-      console.log('is from external')
-      uuids.push(uuid)
-      uuids = uuids
-      $dragCount++
-    }
+    stackStore.move({
+      uuid,
+      container: stack.uuid,
+      side: 'center',
+    })
   }
 
   function handleTabDrop(e: DragEvent) {
@@ -71,29 +46,18 @@
     if (!uuid) return
     e.preventDefault()
     e.stopPropagation()
-    console.log('drop', uuid, ' on/after', e.target.dataset.tabuuid)
-    if (uuids.includes(uuid)) {
-      console.log('is from ourself')
-    } else {
-      console.log('is from external')
-      uuids.push(uuid)
-      uuids = uuids
-      $dragCount++
-    }
+    stackStore.move({
+      uuid,
+      container: stack.uuid,
+      side: 'center',
+    })
   }
   function handleTabClick(e: MouseEvent) {
     activeUUID = e.target.dataset.tabuuid
   }
   function handleTabDelete(uuid: string) {
     navigatorStore.remove(uuid)
-    let retargetIndex = -1
-    if (uuid === activeUUID) {
-      retargetIndex = uuids.findIndex(v=>v===uuid)
-    }
-    uuids = uuids.filter(v=>v!==uuid)
-    if (retargetIndex >= 0) {
-      activeUUID = uuids[retargetIndex] ?? uuids[retargetIndex-1]
-    }
+    stackStore.removeNavigator(uuid)
   }
   function handleTabAdd() {
     let n = mkNavigator()
@@ -123,7 +87,6 @@
       data-tabUUID={navigator.uuid}
       draggable=true
       on:dragstart={handleDragStart}
-      on:dragend={handleDragEnd}
       on:drop={handleTabDrop}
       on:click={handleTabClick}
       class:active={activeUUID===navigator.uuid}

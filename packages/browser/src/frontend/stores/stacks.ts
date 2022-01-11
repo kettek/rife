@@ -12,16 +12,7 @@ export const stackStore = {
   delete: (uuid: string) => {
     let ns = get(stackStore)
 
-    let find = (stack: NavigatorStack): NavigatorStack|undefined => {
-      if (stack.uuid === uuid) {
-        return stack
-      }
-      if (stack.stack) {
-        return find(stack.stack)
-      }
-      return undefined
-    }
-    let container = find(ns)
+    let container = stackStore.findContainer(uuid)
     if (!container) {
       throw new Error(`couldn't find stack ${uuid}`)
     }
@@ -46,16 +37,47 @@ export const stackStore = {
 
     return find(ns, uuid)
   },
-  move: (uuid: string, containerOf: string, side: string) => {
+  findContainer: (uuid: string): NavigatorStack|undefined => {
+    let ns = get(stackStore)
+
+    let find = (stack: NavigatorStack, uuid: string): NavigatorStack|undefined => {
+      if (stack.uuid === uuid) return stack
+      if (stack.stack) {
+        return find(stack.stack, uuid)
+      }
+      return undefined
+    }
+
+    return find(ns, uuid)
+  },
+  move: ({ uuid, containerOf, container, side}: {uuid: string, containerOf?: string, container?: string, side: string}) => {
     let ns = get(stackStore)
     
     let currentContainer = stackStore.findContainerFor(uuid)
     if (!currentContainer) {
       throw new Error(`couldn't find ${uuid}'s stack`)
     }
-    let targetContainer = stackStore.findContainerFor(containerOf)
+
+    let targetContainer: NavigatorStack | undefined
+
+    if (container) {
+      targetContainer = stackStore.findContainer(container)
+    } else if (containerOf) {
+      targetContainer = stackStore.findContainerFor(containerOf)
+    } 
     if (!targetContainer) {
-      throw new Error(`couldn't find ${containerOf}'s stack`)
+      throw new Error(`couldn't find ${container}/${containerOf}'s stack`)
+    }
+
+    // We probably shouldn't bail.
+    if (currentContainer === targetContainer) {
+      return
+    }
+
+    // Prepare to fix active navigator UUID.
+    let activeIndex = -1
+    if (currentContainer.activeNavigatorUUID === uuid) {
+      activeIndex = currentContainer.navigatorUUIDs.findIndex(v=>v===uuid)
     }
 
     if (side === 'center') {
@@ -90,6 +112,34 @@ export const stackStore = {
       // Fix relationships.
       targetContainer.stack.parent = targetContainer
     }
+
+    // Adjust our active navigator uuid if we need to.
+    if (activeIndex >= 0) {
+      currentContainer.activeNavigatorUUID = currentContainer.navigatorUUIDs[activeIndex] ?? currentContainer.navigatorUUIDs[activeIndex-1]
+    }
+    set(ns)
+  },
+  removeNavigator(uuid: string) {
+    let container = stackStore.findContainerFor(uuid)
+    if (!container) return
+
+    let ns = get(stackStore)
+
+    // Get our retarget index for future usage.
+    let retargetIndex = -1
+    if (container.activeNavigatorUUID === uuid) {
+      retargetIndex = container.navigatorUUIDs.findIndex(v=>v===uuid)
+    }
+
+    // Remove navigator from the stack.
+
+    container.navigatorUUIDs = container.navigatorUUIDs.filter(v=>v!==uuid)
+
+    // Set new active navigator if this navigator was focused.
+    if (retargetIndex >= 0) {
+      container.activeNavigatorUUID = container.navigatorUUIDs[retargetIndex] ?? container.navigatorUUIDs[retargetIndex-1]
+    }
+
     set(ns)
   },
   update,
@@ -97,6 +147,10 @@ export const stackStore = {
 
 window.rife.registerToAll((o: NavigationEvent) => {
   if (isNavigationMoveMessage(o)) {
-    stackStore.move(o.uuid, o.toContainerOf, o.side)
+    stackStore.move({
+      uuid: o.uuid,
+      containerOf: o.toContainerOf,
+      side: o.side,
+    })
   }
 })
