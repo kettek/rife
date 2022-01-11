@@ -197,3 +197,11 @@ export interface NavigationFaviconEvent {
 export function isNavigationFaviconEvent(o: any): o is NavigationFaviconEvent {
   return o.type === 'favicon'
 }
+
+export interface NavigationShortcutEvent {
+  type: 'shortcut'
+  shortcut: string
+}
+export function isNavigationShortcutEvent(o: any): o is NavigationShortcutEvent {
+  return o.type === 'shortcut'
+}

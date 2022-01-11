@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store'
-import { isNavigationFocusMessage, isNavigationMoveMessage, NavigationEvent } from '../../api/navigation'
+import { isNavigationFocusMessage, isNavigationMoveMessage, isNavigationShortcutEvent, NavigationEvent } from '../../api/navigation'
 import { mkNavigatorStack, NavigatorStack } from '../interfaces/Stack'
 
 const { subscribe, set, update } = writable<NavigatorStack>(mkNavigatorStack([]))
@@ -181,5 +181,11 @@ window.rife.registerToAll((o: NavigationEvent) => {
     let c = stackStore.findContainerFor(o.uuid)
     if (!c) return
     focusedStackUUID.set(c.uuid)
+  } else if (isNavigationShortcutEvent(o)) {
+    let c = stackStore.findContainer(get(focusedStackUUID))
+    if (!c) return
+    if (o.shortcut === 'close-navigator') {
+      stackStore.removeNavigator(c.activeNavigatorUUID)
+    }
   }
 })

@@ -38,16 +38,28 @@ const createWindow = async () => {
   // Global shortcuts for handling reloading, new tab, close tab, etc.
   mainWindow.on('focus', () => {
     globalShortcut.register("CommandOrControl+R", () => {
-      console.log('send reload to focused navigator')
+      mainWindow?.webContents.send('rife', {
+        type: 'shortcut',
+        shortcut: "reload-navigator"
+      })
     })
     globalShortcut.register("F5", () => {
-      console.log('send reload to focused navigator')
+      mainWindow?.webContents.send('rife', {
+        type: 'shortcut',
+        shortcut: "reload-navigator"
+      })
     })
     globalShortcut.register("CommandOrControl+W", () => {
-      console.log('send close to focused navigator')
+      mainWindow?.webContents.send('rife', {
+        type: 'shortcut',
+        shortcut: "close-navigator"
+      })
     })
     globalShortcut.register("CommandOrControl+T", () => {
-      console.log('send new tab to focused stack')
+      mainWindow?.webContents.send('rife', {
+        type: 'shortcut',
+        shortcut: "open-navigator"
+      })
     })
   })
 
