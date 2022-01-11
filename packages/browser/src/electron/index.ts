@@ -1,6 +1,7 @@
 import {
   app,
   BrowserWindow,
+  globalShortcut,
 } from 'electron'
 import { join } from 'path'
 
@@ -33,6 +34,29 @@ const createWindow = async () => {
   }))
   if (!mainWindow) return
 
+
+  // Global shortcuts for handling reloading, new tab, close tab, etc.
+  mainWindow.on('focus', () => {
+    globalShortcut.register("CommandOrControl+R", () => {
+      console.log('send reload to focused navigator')
+    })
+    globalShortcut.register("F5", () => {
+      console.log('send reload to focused navigator')
+    })
+    globalShortcut.register("CommandOrControl+W", () => {
+      console.log('send close to focused navigator')
+    })
+    globalShortcut.register("CommandOrControl+T", () => {
+      console.log('send new tab to focused stack')
+    })
+  })
+
+  mainWindow.on('blur', () => {
+    globalShortcut.unregister('CommandOrControl+R')
+    globalShortcut.unregister('F5')
+    globalShortcut.unregister("CommandOrControl+W")
+    globalShortcut.unregister("CommandOrControl+T")
+  })
 
   mainWindow.webContents.on('will-navigate', (event, navigationUrl) => {
     // Reset navigators on navigation.
