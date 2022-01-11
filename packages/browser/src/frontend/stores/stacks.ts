@@ -50,7 +50,7 @@ export const stackStore = {
 
     return find(ns, uuid)
   },
-  move: ({ uuid, containerOf, container, side}: {uuid: string, containerOf?: string, container?: string, side: string}) => {
+  move: ({ uuid, containerOf, container, side, focus}: {uuid: string, containerOf?: string, container?: string, side: string, focus?: boolean}) => {
     let ns = get(stackStore)
     
     let currentContainer = stackStore.findContainerFor(uuid)
@@ -82,7 +82,13 @@ export const stackStore = {
 
     if (side === 'center') {
       currentContainer.navigatorUUIDs = currentContainer.navigatorUUIDs.filter(v=>v!==uuid)
-      targetContainer.navigatorUUIDs.push(uuid)
+      console.log(JSON.stringify(targetContainer.navigatorUUIDs))
+      targetContainer.navigatorUUIDs = [
+        ...targetContainer.navigatorUUIDs,
+        uuid
+      ]
+      console.log('added uuid to end of target container')
+      console.log(JSON.stringify(targetContainer.navigatorUUIDs))
     } else if (side === 'left' || side === 'top') {
       currentContainer.navigatorUUIDs = currentContainer.navigatorUUIDs.filter(v=>v!==uuid)
       let tempStack = mkNavigatorStack([uuid])
@@ -117,6 +123,9 @@ export const stackStore = {
     if (activeIndex >= 0) {
       currentContainer.activeNavigatorUUID = currentContainer.navigatorUUIDs[activeIndex] ?? currentContainer.navigatorUUIDs[activeIndex-1]
     }
+    if (focus) {
+      targetContainer.activeNavigatorUUID = uuid
+    }
     set(ns)
   },
   removeNavigator(uuid: string) {
@@ -138,6 +147,20 @@ export const stackStore = {
     // Set new active navigator if this navigator was focused.
     if (retargetIndex >= 0) {
       container.activeNavigatorUUID = container.navigatorUUIDs[retargetIndex] ?? container.navigatorUUIDs[retargetIndex-1]
+    }
+
+    set(ns)
+  },
+  addNavigator(containerUUID: string, uuid: string, switchTo: boolean) {
+    let ns = get(stackStore)
+
+    let container = stackStore.findContainer(containerUUID)
+    if (!container) return
+
+    container.navigatorUUIDs.push(uuid)
+
+    if (switchTo) {
+      container.activeNavigatorUUID = uuid
     }
 
     set(ns)

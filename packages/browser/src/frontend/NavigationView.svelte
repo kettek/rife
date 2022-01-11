@@ -14,7 +14,7 @@
   import { navigatorStore } from './stores/navigators'
   import { isNavigationShowEvent, NavigationEvent } from '../api/navigation'
   import { isNavigationNavigateEvent } from '../api/navigation'
-  import { dragCount } from './stores/tabs'
+  import { stackStore } from './stores/stacks'
 
   export let stack: NavigatorStack
   let activeNavigator: Navigator | undefined
@@ -77,19 +77,17 @@
   function handleDragLeave(e: DragEvent) {
   }
   function handleDrop(e: DragEvent) {
-    let uuid = e.dataTransfer?.getData('text')
+    let uuid = e.dataTransfer?.getData('x-rife-tab')
     if (!uuid) return
     e.preventDefault()
     e.stopPropagation()
 
-    console.log('we got a droppie drop', e)
-    if (stack.navigatorUUIDs.includes(uuid)) {
-      // is already here... move it to end?
-    } else {
-      stack.navigatorUUIDs.push(uuid)
-      stack = stack
-      $dragCount++
-    }
+    stackStore.move({
+      uuid,
+      container: stack.uuid,
+      side: 'center',
+      focus: true,
+    })
   }
 
   function handleSearchKeyup(e: KeyboardEvent) {

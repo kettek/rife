@@ -11,10 +11,9 @@
   export let horizontal: boolean = false
 
   // For the top-level tabs view.
-  export let removeOnDrag: boolean = true
   export let addOnDrop: boolean = true
 
-  $: navigators = $navigatorStore.filter(v=>uuids.includes(v.uuid))
+  $: navigators = stack?.navigatorUUIDs.map(v=>$navigatorStore.find(v2=>v2.uuid===v))
 
   function handleDragStart(e: DragEvent) {
     if (!e.dataTransfer || !e.target) return
@@ -62,10 +61,7 @@
   function handleTabAdd() {
     let n = mkNavigator()
     navigatorStore.add(n)
-    uuids.push(n.uuid)
-    uuids = [...uuids]
-    // Auto-switch to new tab.
-    activeUUID = n.uuid
+    stackStore.addNavigator(stack.uuid, n.uuid, true)
   }
   function handleTabsDelete() {
     for (let uuid of uuids) {
@@ -82,24 +78,27 @@
   ondragover='return false'
   class:horizontal
 >
-  {#each navigators as navigator}
-    <div
-      data-tabUUID={navigator.uuid}
-      draggable=true
-      on:dragstart={handleDragStart}
-      on:drop={handleTabDrop}
-      on:click={handleTabClick}
-      class:active={activeUUID===navigator.uuid}
-    >
-      <img alt={navigator.title} src={navigator.favicons[0]}/>
-      <span>
-        {navigator.title||'New Tab'}
-      </span>
-      <aside on:click|stopPropagation|preventDefault={()=>handleTabDelete(navigator.uuid)}>
-        x
-      </aside>
-    </div>
-  {/each}
+  {#if navigators}
+    {#each navigators as navigator, index}
+      <div
+        data-tabUUID={navigator?.uuid}
+        data-tabIndex={index}
+        draggable=true
+        on:dragstart={handleDragStart}
+        on:drop={handleTabDrop}
+        on:click={handleTabClick}
+        class:active={activeUUID===navigator?.uuid}
+      >
+        <img alt={navigator?.title} src={navigator?.favicons[0]}/>
+        <span>
+          {navigator?.title||'New Tab'}
+        </span>
+        <aside on:click|stopPropagation|preventDefault={()=>handleTabDelete((navigator?.uuid)??'')}>
+          x
+        </aside>
+      </div>
+    {/each}
+  {/if}
   <div on:click={handleTabAdd}>
     +
   </div>
