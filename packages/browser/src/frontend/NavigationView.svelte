@@ -14,7 +14,7 @@
   import { navigatorStore } from './stores/navigators'
   import { isNavigationShowEvent, NavigationEvent } from '../api/navigation'
   import { isNavigationNavigateEvent } from '../api/navigation'
-  import { stackStore } from './stores/stacks'
+  import { focusedStackUUID, stackStore } from './stores/stacks'
 
   export let stack: NavigatorStack
   let activeNavigator: Navigator | undefined
@@ -38,7 +38,7 @@
       console.log('hide', lastActiveNavigatorUUID)
       window.rife.hide(lastActiveNavigatorUUID)
 
-      window.rife.position(stack.activeNavigatorUUID, {x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height-24})
+      window.rife.position(stack.activeNavigatorUUID, {x: bounds.x+1, y: bounds.y+1, width: bounds.width-2, height: bounds.height-2})
 
       window.rife.show(stack.activeNavigatorUUID)
 
@@ -161,7 +161,7 @@
       // TODO: Send IPC for resize for active navigator
       bounds = el.getBoundingClientRect()
       if (activeNavigator) {
-        window.rife.position(activeNavigator.uuid, {x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height-24})
+        window.rife.position(activeNavigator.uuid, {x: bounds.x+1, y: bounds.y+1, width: bounds.width-2, height: bounds.height-2})
       }
     })
     return () => {
@@ -188,11 +188,15 @@
       adblock
     </label>
   </nav>
-  <article bind:this={navElement}>
+  <article bind:this={navElement} class:focused={$focusedStackUUID===stack.uuid}>
   </article>
 </main>
 
 <style>
+  main {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
   nav {
     display: grid;
     grid-template-columns: auto auto auto minmax(0, 1fr) auto auto;
@@ -200,5 +204,9 @@
   article {
     width: 100%;
     height: 100%;
+    border: 1px solid transparent;
+  }
+  article.focused {
+    border: 1px solid blue;
   }
 </style>

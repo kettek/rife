@@ -5,6 +5,13 @@ ipcRenderer.on('uuid', (_: Electron.IpcRendererEvent, uuid: string) => {
   thisUUID = uuid
 })
 
+window.addEventListener('focus', (_: FocusEvent) => {
+  ipcRenderer.send('rife', {
+    type: 'focus',
+    uuid: thisUUID,
+  })
+})
+
 document.addEventListener('drop', (e: DragEvent) => {
   let sideWidth = window.innerWidth / 5
   let sideHeight = window.innerHeight / 5

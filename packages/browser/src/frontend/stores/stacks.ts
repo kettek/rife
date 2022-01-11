@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store'
-import { isNavigationMoveMessage, NavigationEvent } from '../../api/navigation'
+import { isNavigationFocusMessage, isNavigationMoveMessage, NavigationEvent } from '../../api/navigation'
 import { mkNavigatorStack, NavigatorStack } from '../interfaces/Stack'
 
 const { subscribe, set, update } = writable<NavigatorStack>(mkNavigatorStack([]))
@@ -168,6 +168,8 @@ export const stackStore = {
   update,
 }
 
+export const focusedStackUUID = writable<string>('')
+
 window.rife.registerToAll((o: NavigationEvent) => {
   if (isNavigationMoveMessage(o)) {
     stackStore.move({
@@ -175,5 +177,9 @@ window.rife.registerToAll((o: NavigationEvent) => {
       containerOf: o.toContainerOf,
       side: o.side,
     })
+  } else if (isNavigationFocusMessage(o)) {
+    let c = stackStore.findContainerFor(o.uuid)
+    if (!c) return
+    focusedStackUUID.set(c.uuid)
   }
 })

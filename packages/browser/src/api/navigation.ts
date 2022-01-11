@@ -139,6 +139,14 @@ export function isNavigationMoveMessage(o: any): o is NavigationMoveMessage {
   return o.type === 'move'
 }
 
+export interface NavigationFocusMessage {
+  type: 'focus'
+  uuid: string
+}
+export function isNavigationFocusMessage(o: any): o is NavigationFocusMessage {
+  return o.type === 'focus'
+}
+
 export interface NavigationEvent {
   type: string
   uuid: string

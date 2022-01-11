@@ -2,7 +2,7 @@
   import { mkNavigator } from './interfaces/Navigator'
   import type { NavigatorStack } from './interfaces/Stack'
 
-  import { navigatorStore } from './stores/navigators'
+  import { focusedNavigatorUUID, navigatorStore } from './stores/navigators'
   import { stackStore } from './stores/stacks'
 
   export let uuids: string[]
@@ -88,6 +88,7 @@
         on:drop={handleTabDrop}
         on:click={handleTabClick}
         class:active={activeUUID===navigator?.uuid}
+        class:focused={$focusedNavigatorUUID===navigator?.uuid}
       >
         <img alt={navigator?.title} src={navigator?.favicons[0]}/>
         <span>
@@ -121,9 +122,13 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
+    border: 1px solid transparent;
   }
   div.active {
     background: #666;
+  }
+  div.focused {
+    border: 1px solid blue;
   }
   img {
     max-height: 16px;

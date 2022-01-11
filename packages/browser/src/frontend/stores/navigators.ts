@@ -1,5 +1,5 @@
 import { writable, get, Updater } from 'svelte/store'
-import { isNavigationCheckAdblockEvent, isNavigationDevtoolsEvent, isNavigationFaviconEvent, isNavigationMoveMessage, isNavigationNavigateEvent, isNavigationShowEvent, isNavigationTitleEvent, NavigationEvent } from '../../api/navigation'
+import { isNavigationCheckAdblockEvent, isNavigationDevtoolsEvent, isNavigationFaviconEvent, isNavigationFocusMessage, isNavigationMoveMessage, isNavigationNavigateEvent, isNavigationShowEvent, isNavigationTitleEvent, NavigationEvent } from '../../api/navigation'
 import type { Navigator } from '../interfaces/Navigator'
 
 //import { ipcRenderer } from 'electron'
@@ -66,5 +66,9 @@ window.rife.registerToAll((o: NavigationEvent) => {
     navigatorStore.set(ns)
   } else if (isNavigationMoveMessage(o)) {
     console.log('TODO', o)
+  } else if (isNavigationFocusMessage(o)) {
+    focusedNavigatorUUID.set(o.uuid)
   }
 })
+
+export const focusedNavigatorUUID = writable<string>('')

@@ -4,7 +4,7 @@ import { join } from 'path'
 
 import { Navigator } from '../frontend/interfaces/Navigator'
 import { blocker } from './adblocker'
-import { isNavigationMoveMessage } from '../api/navigation'
+import { isNavigationFocusMessage, isNavigationMoveMessage } from '../api/navigation'
 
 export interface NavigatorContainer {
   navigator: Navigator,
@@ -108,6 +108,8 @@ export function createNavigator(navigator: Navigator, rect: {x: number, y: numbe
     if (channel !== 'rife') return
     // Redirect navigation move messages to the our main window.
     if (isNavigationMoveMessage(msg)) {
+      mainWindow?.webContents.send('rife', msg)
+    } else if (isNavigationFocusMessage(msg)) {
       mainWindow?.webContents.send('rife', msg)
     }
   })
