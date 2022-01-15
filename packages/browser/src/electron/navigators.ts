@@ -1,10 +1,11 @@
-import { BrowserView } from 'electron'
+import { BrowserView, Session, session } from 'electron'
 import { mainWindow } from './window'
 import { join } from 'path'
 
 import { Navigator } from '../frontend/interfaces/Navigator'
 import { blocker } from './adblocker'
 import { isNavigationFocusMessage, isNavigationMoveMessage } from '../api/navigation'
+import path from 'path/posix'
 
 export interface NavigatorContainer {
   navigator: Navigator,
@@ -13,17 +14,54 @@ export interface NavigatorContainer {
 
 export const navigators: NavigatorContainer[] = []
 
+const knownSessions: Record<string, boolean> = {}
+function getSession(partition: string|undefined, options: Electron.FromPartitionOptions): Session {
+  let navigatorSession = session.defaultSession
+
+  if (partition) {
+    navigatorSession = session.fromPartition(partition, options)
+  }
+
+  if (!knownSessions[partition??'']) {
+    navigatorSession.protocol.registerFileProtocol('rife', async (req: Electron.ProtocolRequest, cb: (response: string|Electron.ProtocolResponse) => void) => {
+      const p = req.url.substring(7)
+      if (p === 'navigate') {
+        cb({
+          path: path.normalize(`${__dirname}/../../public/navigate.html`)
+        })
+      } else {
+        // bad.
+      }
+    })
+    knownSessions[partition??''] = true
+  }
+
+  return navigatorSession
+}
+
 export function createNavigator(navigator: Navigator, rect: {x: number, y: number, width: number, height: number}): NavigatorContainer|undefined {
   if (navigators.find(v=>v.navigator.uuid===navigator.uuid)) return
+
+  let navigatorSession = getSession(navigator.partition, {
+    cache: !navigator.noCache,
+  })
+
   let n = {
     navigator,
     view: new BrowserView({
       webPreferences: {
         preload: join(__dirname, 'navigator_preload.js'),
+        session: navigatorSession,
       }
     })
   }
-  n.view.webContents.loadURL('https://kettek.net')
+
+  if (!navigator.url) {
+    navigator.url = "rife://navigate"
+  }
+
+  n.view.webContents.loadURL(navigator.url)
+
   n.view.setBounds(rect)
 
   n.view.webContents.on('did-navigate', () => {

@@ -12,21 +12,13 @@
 
   let ns = [
     mkNavigator(),
-    mkNavigator(),
-    mkNavigator(),
-    mkNavigator(),
-    mkNavigator(),
-    mkNavigator(),
   ]
 
   for (let n of ns) {
     navigatorStore.add(n)
   }
 
-  let stack = mkNavigatorStack($navigatorStore.filter((_,index)=>index<3).map(v=>v.uuid))
-  let substack = mkNavigatorStack($navigatorStore.filter((_,index)=>index>=3).map(v=>v.uuid))
-  stack.stack = substack
-  stack.stack.parent = stack
+  let stack = mkNavigatorStack($navigatorStore.map(v=>v.uuid))
 
   stackStore.set(stack)
 
@@ -35,7 +27,7 @@
 <main>
   <Menu></Menu>
   <SplitView type='horizontal' pos={25}>
-    <TabsView slot='a' uuids={$navigatorStore.map(v=>v.uuid)} removeOnDrag={false} addOnDrop={false}></TabsView>
+    <TabsView slot='a' stack={$stackStore} removeOnDrag={false} addOnDrop={false}></TabsView>
     <StackContainerView slot='b' stack={$stackStore}></StackContainerView>
   </SplitView>
 </main>

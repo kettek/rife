@@ -58,8 +58,12 @@
     navigatorStore.remove(uuid)
     stackStore.removeNavigator(uuid)
   }
-  function handleTabAdd() {
+  function handleTabAdd(e: MouseEvent) {
     let n = mkNavigator()
+    if (e.shiftKey) {
+      n.partition = 'private'
+      n.noCache = true
+    }
     navigatorStore.add(n)
     stackStore.addNavigator(stack.uuid, n.uuid, true)
   }
@@ -93,6 +97,9 @@
         <img alt={navigator?.title} src={navigator?.favicons[0]}/>
         <span>
           {navigator?.title||'New Tab'}
+          {#if navigator?.partition === 'private'}
+            <span>(private)</span>
+          {/if}
         </span>
         <aside on:click|stopPropagation|preventDefault={()=>handleTabDelete((navigator?.uuid)??'')}>
           x

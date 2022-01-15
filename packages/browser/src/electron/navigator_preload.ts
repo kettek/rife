@@ -1,8 +1,17 @@
-import { ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 
 let thisUUID:string
 ipcRenderer.on('uuid', (_: Electron.IpcRendererEvent, uuid: string) => {
   thisUUID = uuid
+})
+
+// I guess this is safe enough to expose
+contextBridge.exposeInMainWorld('rife', {
+  navigate: (url: string) => ipcRenderer.invoke('rife', {
+    type: 'navigate',
+    uuid: thisUUID,
+    url,
+  }),
 })
 
 window.addEventListener('focus', (_: FocusEvent) => {

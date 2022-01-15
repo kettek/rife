@@ -14,6 +14,8 @@ export interface Navigator {
   activeHistoryPosition: number
   favicons: string[] // current list of favicons
   adblock: boolean // FIXME: This needs to be part of an extensions system.
+  partition?: string // partition to use, for private mode or custom sessions.
+  noCache?: boolean // whether or not to cache the partition session. If used on a partition that exists, the partition's cache will be cleared.
 }
 export function mkNavigator(): Navigator {
   return {

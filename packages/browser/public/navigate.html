@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+  <title>Navigate</title>
+</head>
+<body>
+  navigate me, senpai
+  <label>
+    <input id='rife-search' type='search' value=''>
+    <input id='rife-search-submit' type='button' value='go'>
+  </label>
+  <script>
+    function navigate(url) {
+      try {
+        new URL(url)
+      } catch(e) {
+        // TODO: Make configurable.
+        url = 'https://duckduckgo.com/?q='+url
+      }
+      window.location.assign(url)
+    }
+
+    let el = document.getElementById('rife-search')
+    el.addEventListener('keyup', (e) => {
+      if (e.code === 'Enter') {
+        navigate(el.value)
+      }
+    })
+    let el2 = document.getElementById('rife-search-submit')
+    el2.addEventListener('click', (e) => {
+      navigate(el.value)
+    })
+  </script>
+</body>
+</html>
